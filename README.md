@@ -15,10 +15,14 @@ docker-compose -f ./docker/docker-compose.yml down
 ```
 
 aws dynamodb scan \
---endpoint-url=http://localhost:8000 \
---table-name POC_QUERY_TABLE
+ --endpoint-url=http://localhost:8000 \
+ --table-name POC_QUERY_TABLE
 
 aws dynamodb scan \
---endpoint-url=http://localhost:8000 \
---table-name POC_QUERY_TABLE \
---select "COUNT"
+ --endpoint-url=http://localhost:8000 \
+ --table-name POC_QUERY_TABLE \
+ --select "COUNT"
+
+aws dynamodb batch-write-item \
+ --endpoint-url=http://localhost:8000 \
+ --request-items file://request-items.json \

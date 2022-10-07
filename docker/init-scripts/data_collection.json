@@ -1,5 +1,5 @@
 {
-  "DataCollection": [
+  "POC_QUERY_TABLE": [
     {
       "PutRequest": {
         "Item": {
