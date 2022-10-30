@@ -4,8 +4,6 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 import express, { Application, Request, Response } from "express";
-import { Configuration, PlaidApi } from "plaid";
-import { ConfigService } from "./services/config-service";
 import { TokenService } from "./services/token-service";
 import { TransactionService } from "./services/transaction-service";
 
@@ -27,13 +25,9 @@ const userId = "aaron-sisler";
 let ACCESS_TOKEN: any = null;
 let ITEM_ID = null;
 
-const clientConfig: Configuration = ConfigService.getClientConfig();
-
-const client = new PlaidApi(clientConfig);
-
 app.get("/hello", (_request: Request, response: Response) => {
   try {
-    return response.send("Hello!");
+    return response.send("Hello from DDB App!");
   } catch (error) {
     console.log(error);
     console.error("Try again from GET /hello");

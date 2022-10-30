@@ -3,21 +3,21 @@ import { DatabaseType } from "../models/database-types";
 import { databaseTypeBuilder } from "../utils/database-type-builder";
 import { prettyPrintResponse } from "../utils/pretty-print-response";
 import { ConfigService } from "./config-service";
-import { DatabaseService } from "./database-service";
+import { DynamoDatabaseService } from "./dynamo-database-service";
 
 class TokenService {
   client: PlaidApi;
-  databaseService: DatabaseService;
+  dynamoDatabaseService: DynamoDatabaseService;
 
   constructor() {
     const clientConfig: Configuration = ConfigService.getClientConfig();
 
     this.client = new PlaidApi(clientConfig);
-    this.databaseService = new DatabaseService();
+    this.dynamoDatabaseService = new DynamoDatabaseService();
   }
 
   async getAccessTokens(userId: string) {
-    const accessTokens = await this.databaseService.getItems(
+    const accessTokens = await this.dynamoDatabaseService.getItems(
       databaseTypeBuilder(DatabaseType.USER, userId),
       DatabaseType.ITEM
     );
@@ -32,7 +32,7 @@ class TokenService {
       accessToken,
     };
 
-    this.databaseService.create(userItem);
+    this.dynamoDatabaseService.create(userItem);
   }
 
   async createLinkTokenResponse(): Promise<LinkTokenCreateResponse> {

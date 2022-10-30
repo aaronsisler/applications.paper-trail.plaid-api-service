@@ -3,7 +3,7 @@ import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 
 import { LOCAL_DDB_ENDPOINT, TABLE_NAME } from "../config";
 
-class DatabaseService {
+class DynamoDatabaseService {
   ddbDocClient: DynamoDBDocument;
 
   constructor() {
@@ -53,4 +53,4 @@ class DatabaseService {
   }
 }
 
-export { DatabaseService };
+export { DynamoDatabaseService };
