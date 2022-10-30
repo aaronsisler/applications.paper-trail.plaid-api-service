@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocument, GetCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 
 import { LOCAL_DDB_ENDPOINT, TABLE_NAME } from "../config";
 

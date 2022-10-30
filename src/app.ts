@@ -4,16 +4,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 import express, { Application, Request, Response } from "express";
-import {
-  Configuration,
-  PlaidApi,
-  RemovedTransaction,
-  Transaction,
-  TransactionsSyncResponse,
-} from "plaid";
+import { Configuration, PlaidApi } from "plaid";
 import { ConfigService } from "./services/config-service";
 import { TokenService } from "./services/token-service";
-import { prettyPrintResponse } from "./utils/pretty-print-response";
+import { TransactionService } from "./services/transaction-service";
 
 console.log(`Your PROFILE is ${process.env.PROFILE}`); // undefined
 
@@ -81,42 +75,12 @@ app.post("/access-token", async (request, response) => {
   }
 });
 
-app.get("/transactions", async (_request: Request, response: Response) => {});
-
-app.get("/transactions-old", async (_request: Request, response: Response) => {
+app.get("/transactions", async (_request: Request, response: Response) => {
   try {
-    // Set cursor to empty to receive all historical updates
-    let cursor = null;
+    // TODO untested
+    const transactions = await new TransactionService().getAll(ACCESS_TOKEN);
 
-    // New transaction updates since "cursor"
-    let added: Transaction[] = [];
-    let modified: Transaction[] = [];
-    // Removed transaction ids
-    let removed: RemovedTransaction[] = [];
-    let hasMore = true;
-    // Iterate through each page of new transaction updates for item
-    while (hasMore) {
-      const request: any = {
-        access_token: ACCESS_TOKEN,
-        cursor: cursor,
-      };
-      const plaidResponse: any = await client.transactionsSync(request);
-      const transactionsSyncResponse: TransactionsSyncResponse =
-        plaidResponse?.data;
-      // console.log("transactionsSyncResponse");
-      // console.log(transactionsSyncResponse);
-      // Add this page of results
-      added = added.concat(transactionsSyncResponse.added);
-      modified = modified.concat(transactionsSyncResponse.modified);
-      removed = removed.concat(transactionsSyncResponse.removed);
-      hasMore = transactionsSyncResponse.has_more;
-      // Update cursor to the next cursor
-      cursor = transactionsSyncResponse.next_cursor;
-    }
-
-    // Return 8 transactions
-    const recentlyAdded = [...added].slice(-8);
-    response.json({ transactions: recentlyAdded });
+    response.json(transactions);
   } catch (error) {
     console.log(error);
     console.error("Try again from GET /transactions");
