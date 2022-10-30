@@ -1,0 +1,11 @@
+USE PAPER_TRAIL_RECORD_DATA_LOCAL;
+
+DROP TABLE IF EXISTS USERS;
+
+CREATE TABLE USERS (
+    UserPK int NOT NULL AUTO_INCREMENT,
+    UserId varchar(255) NOT NULL,
+    ItemId varchar(255),
+    AccessToken varchar(255),
+    PRIMARY KEY (UserPK)
+);
