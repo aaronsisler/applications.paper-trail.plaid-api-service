@@ -4,7 +4,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 import express, { Application, Request, Response } from "express";
-import { TokenService } from "./services/token-service";
+import { TokenServiceDdb } from "./services/token-service-ddb";
 import { TransactionService } from "./services/transaction-service";
 
 console.log(`Your PROFILE is ${process.env.PROFILE}`); // undefined
@@ -37,7 +37,7 @@ app.get("/hello", (_request: Request, response: Response) => {
 app.post("/link-token", async (_request, response) => {
   try {
     const createTokenResponse =
-      await new TokenService().createLinkTokenResponse();
+      await new TokenServiceDdb().createLinkTokenResponse();
 
     return response.json(createTokenResponse);
   } catch (error) {
@@ -48,7 +48,7 @@ app.post("/link-token", async (_request, response) => {
 
 app.post("/access-token", async (request, response) => {
   try {
-    const tokenService = new TokenService();
+    const tokenService = new TokenServiceDdb();
     const publicToken = request.body["x-public-token"];
 
     const { accessToken, itemId } = await tokenService.createAccessToken(

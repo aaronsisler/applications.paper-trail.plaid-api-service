@@ -3,7 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 import express, { Application, Request, Response } from "express";
-import { RdsDatabaseService } from "./services/rds-database-service";
+import { RdsDatabaseService } from "./data-access-layer/rds-database-service";
 
 console.log(`Your PROFILE is ${process.env.PROFILE}`); // undefined
 
@@ -30,9 +30,6 @@ app.get("/hello", async (_request: Request, response: Response) => {
 app.post("/access-token", async (request: Request, response: Response) => {
   try {
     const { accessToken, itemId, userId } = request.body;
-    console.log(userId);
-    console.log(itemId);
-    console.log(accessToken);
 
     await new RdsDatabaseService().create(userId, itemId, accessToken);
 
@@ -40,7 +37,7 @@ app.post("/access-token", async (request: Request, response: Response) => {
   } catch (error) {
     // console.log(error);
     console.error("Try again from POST /access-token");
-    return response.sendStatus(500).send(error);
+    return response.status(500).send(error);
     // return response.er;
   }
 });

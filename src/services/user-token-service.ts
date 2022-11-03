@@ -2,22 +2,22 @@ import { PlaidApi, LinkTokenCreateResponse, Configuration } from "plaid";
 import { DatabaseType } from "../models/database-types";
 import { databaseTypeBuilder } from "../utils/database-type-builder";
 import { prettyPrintResponse } from "../utils/pretty-print-response";
-import { ConfigService } from "./config-service";
-import { DynamoDatabaseService } from "./dynamo-database-service";
+import { ConfigService } from "../services/config-service";
+import { UserTokenDao } from "../data-access-layer/user-token-dao";
 
-class TokenService {
+class UserTokenService {
   client: PlaidApi;
-  dynamoDatabaseService: DynamoDatabaseService;
+  userTokenDao: UserTokenDao;
 
   constructor() {
     const clientConfig: Configuration = ConfigService.getClientConfig();
 
     this.client = new PlaidApi(clientConfig);
-    this.dynamoDatabaseService = new DynamoDatabaseService();
+    this.rdsDatabaseService = new RdsDatabaseService();
   }
 
   async getAccessTokens(userId: string) {
-    const accessTokens = await this.dynamoDatabaseService.getItems(
+    const accessTokens = await this.rdsDatabaseService.getItems(
       databaseTypeBuilder(DatabaseType.USER, userId),
       DatabaseType.ITEM
     );
@@ -57,4 +57,4 @@ class TokenService {
   }
 }
 
-export { TokenService };
+export { TokenServiceRds };
