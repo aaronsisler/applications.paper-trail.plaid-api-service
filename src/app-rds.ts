@@ -41,6 +41,7 @@ app.post("/access-token", async (request: Request, response: Response) => {
     // console.log(error);
     console.error("Try again from POST /access-token");
     return response.sendStatus(500).send(error);
+    // return response.er;
   }
 });
 
