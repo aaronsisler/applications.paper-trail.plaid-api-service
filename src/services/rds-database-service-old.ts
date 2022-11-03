@@ -1,10 +1,8 @@
-const util = require("util");
+// const mysql = require("mysql");
 
 import { DATABASE_NAME } from "../config";
 import { DATABASE_TABLE } from "../models/database-tables";
-import mysql from "mysql2";
-
-// node native promisify
+import mysql from "mysql";
 
 const config = {
   host: "localhost", // ip address of server running mysql
@@ -29,14 +27,23 @@ class RdsDatabaseService {
   async create(userId: string, itemId: string, accessToken: string) {
     try {
       const records = [[userId, itemId, accessToken]];
-
-      const query = util.promisify(this.pool.query).bind(this.pool);
-      await query(
+      const callback = (error: any, data: any) => {
+        if (error) {
+          console.log("Error");
+          console.log(error);
+          throw error;
+        }
+        // if there is no error, you have the result
+        console.log("data");
+        console.log(data);
+      };
+      await this.pool.query(
         `INSE1RT INTO ${DATABASE_TABLE.USERS} (UserId, ItemId, AccessToken) VALUES ?`,
-        [records]
+        [records],
+        callback
       );
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       console.error("Try again from RdsDatabaseService::create");
       throw error;
     }

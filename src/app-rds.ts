@@ -27,13 +27,20 @@ app.get("/hello", async (_request: Request, response: Response) => {
   }
 });
 
-app.post("/access-token", async (_request: Request, response: Response) => {
+app.post("/access-token", async (request: Request, response: Response) => {
   try {
-    new RdsDatabaseService().create();
+    const { accessToken, itemId, userId } = request.body;
+    console.log(userId);
+    console.log(itemId);
+    console.log(accessToken);
+
+    await new RdsDatabaseService().create(userId, itemId, accessToken);
+
     return response.sendStatus(201);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     console.error("Try again from POST /access-token");
+    return response.sendStatus(500).send(error);
   }
 });
 

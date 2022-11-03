@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS USERS;
 CREATE TABLE USERS (
     UserPK int NOT NULL AUTO_INCREMENT,
     UserId varchar(255) NOT NULL,
-    ItemId varchar(255),
-    AccessToken varchar(255),
+    ItemId varchar(255) NOT NULL,
+    AccessToken varchar(255) NOT NULL,
     PRIMARY KEY (UserPK)
 );

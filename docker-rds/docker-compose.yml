@@ -9,6 +9,10 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - ${MYSQL_PORT}:${MYSQL_PORT}
+    volumes:
+      # - "./init-scripts:/init-scripts"
+      - "./init-scripts:/docker-entrypoint-initdb.d/"
+      # - "./scripts/data.sql:/docker-entrypoint-initdb.d/2.sql"
 
   local-data-api:
     image: koxudaxi/local-data-api

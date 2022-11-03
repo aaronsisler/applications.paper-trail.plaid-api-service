@@ -1,0 +1,5 @@
+enum DATABASE_TABLE {
+  USERS = "USERS",
+}
+
+export { DATABASE_TABLE };
