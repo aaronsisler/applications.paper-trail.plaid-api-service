@@ -1,39 +1,21 @@
 import { PlaidApi, LinkTokenCreateResponse, Configuration } from "plaid";
-import { DatabaseType } from "../models/database-types";
-import { databaseTypeBuilder } from "../utils/database-type-builder";
 import { prettyPrintResponse } from "../utils/pretty-print-response";
-import { ConfigService } from "../services/config-service";
-import { UserTokenDao } from "../data-access-layer/user-token-dao";
+import { ConfigService } from "./config-service";
+import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
 
-class UserTokenService {
+class UserAccessTokenService {
   client: PlaidApi;
-  userTokenDao: UserTokenDao;
+  userAccessTokenDao: UserAccessTokenDao = new UserAccessTokenDao();
 
   constructor() {
     const clientConfig: Configuration = ConfigService.getClientConfig();
 
     this.client = new PlaidApi(clientConfig);
-    this.rdsDatabaseService = new RdsDatabaseService();
   }
 
-  async getAccessTokens(userId: string) {
-    const accessTokens = await this.rdsDatabaseService.getItems(
-      databaseTypeBuilder(DatabaseType.USER, userId),
-      DatabaseType.ITEM
-    );
+  async getAccessTokens(userId: string) {}
 
-    console.log(accessTokens);
-  }
-
-  async saveAccessToken(userId: string, itemId: string, accessToken: string) {
-    const userItem = {
-      partitionKey: databaseTypeBuilder(DatabaseType.USER, userId),
-      sortKey: databaseTypeBuilder(DatabaseType.ITEM, itemId),
-      accessToken,
-    };
-
-    this.dynamoDatabaseService.create(userItem);
-  }
+  async saveAccessToken(userId: string, itemId: string, accessToken: string) {}
 
   async createLinkTokenResponse(): Promise<LinkTokenCreateResponse> {
     const createTokenResponse = await this.client.linkTokenCreate(
@@ -57,4 +39,4 @@ class UserTokenService {
   }
 }
 
-export { TokenServiceRds };
+export { UserAccessTokenService };

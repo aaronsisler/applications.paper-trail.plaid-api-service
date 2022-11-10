@@ -13,6 +13,7 @@
 
 - app
 - data-access-layer
+  - DAOs which hold the DB Transaction and the SQL statement management
 - models
 - services
 - utils

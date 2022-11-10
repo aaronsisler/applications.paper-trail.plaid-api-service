@@ -1,8 +1,8 @@
-// const util = require("util");
 const { promisify } = require("util");
-import { DATABASE_NAME } from "../config";
-import { DATABASE_TABLE } from "../models/database-tables";
+
 import mysql from "mysql2";
+
+import { DATABASE_NAME } from "../config";
 
 const config = {
   host: "localhost", // ip address of server running mysql
@@ -13,6 +13,7 @@ const config = {
 
 class RdsDatabaseService {
   pool: mysql.Pool;
+  connection: any;
 
   constructor() {
     this.pool = mysql.createPool(config);
@@ -23,39 +24,83 @@ class RdsDatabaseService {
     });
   }
 
-  async create(userId: string, itemId: string, accessToken: string) {
+  async beginTransaction() {
     try {
-      const records = [[userId, itemId, accessToken]];
-
       const query = promisify(this.pool.query).bind(this.pool);
-      await query(
-        `INSERT INTO ${DATABASE_TABLE.USERS} (UserId, ItemId, AccessToken) VALUES ?`,
-        [records]
-      );
+      await query("START TRANSACTION");
     } catch (error) {
       console.log(error);
-      console.error("Try again from RdsDatabaseService::create");
+      console.error("ERROR::RdsDatabaseService::beginTransaction");
       throw error;
     }
   }
 
-  async read(userId: string): Promise<any> {
+  async commitTransaction() {
     try {
-      return { userId };
+      const query = promisify(this.pool.query).bind(this.pool);
+      await query("COMMIT");
     } catch (error) {
       console.log(error);
-      console.error("Try again from RdsDatabaseService::get");
+      console.error("ERROR::RdsDatabaseService::commitTransaction");
+      throw error;
     }
   }
 
-  async readAll(): Promise<any> {
+  async rollbackTransaction() {
     try {
-      return [{ userId: "aaron-sisler" }, { userId: "bridget-sisler" }];
+      const query = promisify(this.pool.query).bind(this.pool);
+      await query("ROLLBACK");
     } catch (error) {
       console.log(error);
-      console.error("Try again from RdsDatabaseService::getItems");
+      console.error("ERROR::RdsDatabaseService::rollbackTransaction");
+      throw error;
+    }
+  }
+
+  async executeSqlStatement(sqlStatement: string, values: any) {
+    try {
+      const query = promisify(this.pool.query).bind(this.pool);
+      await query(sqlStatement, [values]);
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::RdsDatabaseService::executeSqlStatement");
+      throw error;
     }
   }
 }
 
 export { RdsDatabaseService };
+
+// getConnection = () => {
+//   return new Promise((resolve, reject) => {
+//     this.pool.getConnection((err, connection) => {
+//       if (err) reject(err);
+//       console.log("MySQL pool connected: threadId " + connection.threadId);
+//       const query = (sql: string, binding: any) => {
+//         return new Promise((resolve, reject) => {
+//           connection.query(sql, binding, (err, result) => {
+//             if (err) reject(err);
+//             resolve(result);
+//           });
+//         });
+//       };
+//       const release = () => {
+//         return new Promise((resolve, reject) => {
+//           if (err) reject(err);
+//           console.log("MySQL pool released: threadId " + connection.threadId);
+//           resolve(connection.release());
+//         });
+//       };
+//       resolve({ query, release });
+//     });
+//   });
+// };
+
+// getQuery = (sql: string, binding: any) => {
+//   return new Promise((resolve, reject) => {
+//     this.pool.query(sql, binding, (err, result, fields) => {
+//       if (err) reject(err);
+//       resolve(result);
+//     });
+//   });
+// };
