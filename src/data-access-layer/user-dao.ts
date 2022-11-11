@@ -14,16 +14,18 @@ class UserDao implements Dao {
 
   async getAll() {}
 
-  async create(user: User) {
+  async create(user: User): Promise<User> {
     try {
       const values = [[user?.principalId, user?.firstName, user?.lastName]];
 
       await this.rdsDatabaseService.beginTransaction();
-      await this.rdsDatabaseService.executeSqlStatement(
+      const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
         SQL_USERS_INSERT,
         values
       );
       await this.rdsDatabaseService.commitTransaction();
+
+      return { ...user, userId: insertId };
     } catch (error) {
       await this.rdsDatabaseService.rollbackTransaction();
       console.error("ERROR::UserDao::create");

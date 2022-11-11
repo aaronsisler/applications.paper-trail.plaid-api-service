@@ -8,10 +8,9 @@ class UserService {
     this.userDao = new UserDao();
   }
 
-  async create(user: User) {
+  async create(user: User): Promise<User> {
     try {
-      console.log(user);
-      await this.userDao.create(user);
+      return await this.userDao.create(user);
     } catch (error) {
       console.error("Try again from UserService::create");
       throw error;

@@ -60,7 +60,9 @@ class RdsDatabaseService {
   async executeSqlStatement(sqlStatement: string, values: any) {
     try {
       const query = promisify(this.pool.query).bind(this.pool);
-      await query(sqlStatement, [values]);
+      const { insertId } = await query(sqlStatement, [values]);
+
+      return { insertId };
     } catch (error) {
       console.log(error);
       console.error("ERROR::RdsDatabaseService::executeSqlStatement");

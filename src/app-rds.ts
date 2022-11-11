@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 
 import express, { Application, Request, Response } from "express";
 import { RdsDatabaseService } from "./data-access-layer/rds-database-service";
+import { User } from "./models/user";
 import { UserService } from "./services/user-service";
 
 console.log(`Your PROFILE is ${process.env.PROFILE}`); // undefined
@@ -28,17 +29,20 @@ app.get("/hello", async (_request: Request, response: Response) => {
   }
 });
 
-app.post("/user", async (request: Request, response: Response) => {
-  try {
-    const result = await new UserService().create(request.body);
+app.post(
+  "/user",
+  async (request: Request, response: Response): Promise<Response<User>> => {
+    try {
+      const result = await new UserService().create(request.body);
 
-    return response.send(result);
-  } catch (error) {
-    console.log(error);
-    console.error("Try again from POST /user");
-    return response.status(500).send(error);
+      return response.send(result);
+    } catch (error) {
+      console.log(error);
+      console.error("Try again from POST /user");
+      return response.status(500).send(error);
+    }
   }
-});
+);
 
 app.post("/access-token", async (request: Request, response: Response) => {
   try {

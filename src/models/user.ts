@@ -1,4 +1,5 @@
 interface User {
+  userId: number;
   principalId: string;
   firstName: string;
   lastName: string;
