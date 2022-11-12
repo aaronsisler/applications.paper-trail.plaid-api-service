@@ -1,47 +1,47 @@
-import { PlaidApi, LinkTokenCreateResponse, Configuration } from "plaid";
-import { DatabaseType } from "../models/database-types";
-import { databaseTypeBuilder } from "../utils/database-type-builder";
-import { prettyPrintResponse } from "../utils/pretty-print-response";
-import { ConfigService } from "../services/config-service";
+import { UserAccessToken } from "../models/user-access-token";
+import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
+import { SQL_USER_ACCESS_TOKENS_INSERT } from "./sql-statements";
 
-class UserAccessTokenDao {
-  // rdsDatabaseService: RdsDatabaseService;
-  // constructor() {
-  //   const clientConfig: Configuration = ConfigService.getClientConfig();
-  //   this.rdsDatabaseService = new RdsDatabaseService();
-  // }
-  // async getAccessTokens(userId: string) {
-  //   const accessTokens = await this.rdsDatabaseService.getItems(
-  //     databaseTypeBuilder(DatabaseType.USER, userId),
-  //     DatabaseType.ITEM
-  //   );
-  //   console.log(accessTokens);
-  // }
-  // async saveAccessToken(userId: string, itemId: string, accessToken: string) {
-  //   const userItem = {
-  //     partitionKey: databaseTypeBuilder(DatabaseType.USER, userId),
-  //     sortKey: databaseTypeBuilder(DatabaseType.ITEM, itemId),
-  //     accessToken,
-  //   };
-  //   this.dynamoDatabaseService.create(userItem);
-  // }
-  // async createLinkTokenResponse(): Promise<LinkTokenCreateResponse> {
-  //   const createTokenResponse = await this.client.linkTokenCreate(
-  //     ConfigService.getLinkTokenConfig()
-  //   );
-  //   prettyPrintResponse(createTokenResponse);
-  //   return createTokenResponse.data;
-  // }
-  // async createAccessToken(publicToken: string) {
-  //   const tokenResponse = await this.client.itemPublicTokenExchange({
-  //     public_token: publicToken,
-  //   });
-  //   prettyPrintResponse(tokenResponse);
-  //   const accessToken = tokenResponse?.data?.access_token;
-  //   const itemId = tokenResponse?.data?.item_id;
-  //   return { accessToken, itemId };
-  // }
+class UserAccessTokenDao implements Dao {
+  rdsDatabaseService: RdsDatabaseService;
+
+  constructor() {
+    this.rdsDatabaseService = new RdsDatabaseService();
+  }
+
+  async get(userId: string) {}
+
+  async getAll() {}
+
+  async create(userAccessToken: UserAccessToken): Promise<UserAccessToken> {
+    try {
+      const values = [
+        [
+          userAccessToken?.userId,
+          userAccessToken?.itemId,
+          userAccessToken?.accessToken,
+        ],
+      ];
+
+      await this.rdsDatabaseService.beginTransaction();
+      const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
+        SQL_USER_ACCESS_TOKENS_INSERT,
+        values
+      );
+      await this.rdsDatabaseService.commitTransaction();
+
+      return { ...userAccessToken, userAuthTokenId: insertId };
+    } catch (error) {
+      await this.rdsDatabaseService.rollbackTransaction();
+      console.error("ERROR::UserDao::create");
+      throw error;
+    }
+  }
+
+  async update() {}
+
+  async delete() {}
 }
 
 export { UserAccessTokenDao };

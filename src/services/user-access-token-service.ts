@@ -2,20 +2,29 @@ import { PlaidApi, LinkTokenCreateResponse, Configuration } from "plaid";
 import { prettyPrintResponse } from "../utils/pretty-print-response";
 import { ConfigService } from "./config-service";
 import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
+import { UserAccessToken } from "../models/user-access-token";
 
 class UserAccessTokenService {
   client: PlaidApi;
-  userAccessTokenDao: UserAccessTokenDao = new UserAccessTokenDao();
+  userAccessTokenDao: UserAccessTokenDao;
 
   constructor() {
     const clientConfig: Configuration = ConfigService.getClientConfig();
 
     this.client = new PlaidApi(clientConfig);
+    this.userAccessTokenDao = new UserAccessTokenDao();
   }
 
   async getAccessTokens(userId: string) {}
 
-  async saveAccessToken(userId: string, itemId: string, accessToken: string) {}
+  async create(userAccessToken: UserAccessToken) {
+    try {
+      return await this.userAccessTokenDao.create(userAccessToken);
+    } catch (error) {
+      console.error("Try again from UserService::create");
+      throw error;
+    }
+  }
 
   async createLinkTokenResponse(): Promise<LinkTokenCreateResponse> {
     const createTokenResponse = await this.client.linkTokenCreate(
