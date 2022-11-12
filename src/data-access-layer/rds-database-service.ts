@@ -60,9 +60,9 @@ class RdsDatabaseService {
   async executeSqlStatement(sqlStatement: string, values: any) {
     try {
       const query = promisify(this.pool.query).bind(this.pool);
-      const { insertId } = await query(sqlStatement, [values]);
+      const result = await query(sqlStatement, [values]);
 
-      return { insertId };
+      return result;
     } catch (error) {
       console.log(error);
       console.error("ERROR::RdsDatabaseService::executeSqlStatement");
@@ -72,37 +72,3 @@ class RdsDatabaseService {
 }
 
 export { RdsDatabaseService };
-
-// getConnection = () => {
-//   return new Promise((resolve, reject) => {
-//     this.pool.getConnection((err, connection) => {
-//       if (err) reject(err);
-//       console.log("MySQL pool connected: threadId " + connection.threadId);
-//       const query = (sql: string, binding: any) => {
-//         return new Promise((resolve, reject) => {
-//           connection.query(sql, binding, (err, result) => {
-//             if (err) reject(err);
-//             resolve(result);
-//           });
-//         });
-//       };
-//       const release = () => {
-//         return new Promise((resolve, reject) => {
-//           if (err) reject(err);
-//           console.log("MySQL pool released: threadId " + connection.threadId);
-//           resolve(connection.release());
-//         });
-//       };
-//       resolve({ query, release });
-//     });
-//   });
-// };
-
-// getQuery = (sql: string, binding: any) => {
-//   return new Promise((resolve, reject) => {
-//     this.pool.query(sql, binding, (err, result, fields) => {
-//       if (err) reject(err);
-//       resolve(result);
-//     });
-//   });
-// };

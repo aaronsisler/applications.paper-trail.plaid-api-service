@@ -27,7 +27,7 @@ app.get("/hello", async (_request: Request, response: Response) => {
     return response.send("Hello from RDS App!");
   } catch (error) {
     console.log(error);
-    console.error("Try again from GET /hello");
+    console.error("ERROR::GET /hello");
   }
 });
 
@@ -35,12 +35,28 @@ app.post(
   "/user",
   async (request: Request, response: Response): Promise<Response<User>> => {
     try {
-      const result = await new UserService().create(request.body);
+      const result = await new UserService().save(request.body);
 
       return response.send(result);
     } catch (error) {
       console.log(error);
-      console.error("Try again from POST /user");
+      console.error("ERROR::POST /user");
+      return response.status(500).send(error);
+    }
+  }
+);
+
+app.get(
+  "/user/:userId",
+  async (request: Request, response: Response): Promise<Response<User>> => {
+    try {
+      const { userId } = request.params;
+      const result = await new UserService().get(parseInt(userId));
+
+      return response.send(result);
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::GET /user/:userId");
       return response.status(500).send(error);
     }
   }
@@ -54,7 +70,7 @@ app.post(
   ): Promise<Response<UserAccessToken>> => {
     try {
       const { userId } = request.params;
-      const result = await new UserAccessTokenService().create({
+      const result = await new UserAccessTokenService().save({
         ...request.body,
         userId,
       });
@@ -62,7 +78,7 @@ app.post(
       return response.send(result);
     } catch (error) {
       console.log(error);
-      console.error("Try again from POST /user");
+      console.error("ERROR::POST /user/:userId/access-token");
       return response.status(500).send(error);
     }
   }
@@ -77,7 +93,7 @@ app.post("/access-token", async (request: Request, response: Response) => {
     return response.sendStatus(201);
   } catch (error) {
     // console.log(error);
-    console.error("Try again from POST /access-token");
+    console.error("ERROR::POST /access-token");
     return response.status(500).send(error);
   }
 });
@@ -93,7 +109,7 @@ app.get(
       return response.send(result);
     } catch (error) {
       console.log(error);
-      console.error("Try again from POST /access-token");
+      console.error("ERROR::GET /access-token/:userId");
     }
   }
 );
@@ -105,7 +121,7 @@ app.get("/access-token", async (_request: Request, response: Response) => {
     return response.send(result);
   } catch (error) {
     console.log(error);
-    console.error("Try again from POST /access-token");
+    console.error("ERROR::GET /access-token");
   }
 });
 

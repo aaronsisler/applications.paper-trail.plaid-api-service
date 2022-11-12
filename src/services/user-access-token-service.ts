@@ -17,7 +17,7 @@ class UserAccessTokenService {
 
   async getAccessTokens(userId: string) {}
 
-  async create(userAccessToken: UserAccessToken) {
+  async save(userAccessToken: UserAccessToken) {
     try {
       return await this.userAccessTokenDao.create(userAccessToken);
     } catch (error) {

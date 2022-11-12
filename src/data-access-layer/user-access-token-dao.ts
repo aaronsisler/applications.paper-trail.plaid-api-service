@@ -1,7 +1,7 @@
 import { UserAccessToken } from "../models/user-access-token";
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
-import { SQL_USER_ACCESS_TOKENS_INSERT } from "./sql-statements";
+import { SQL_USER_ACCESS_TOKENS_CREATE } from "./sql-statements";
 
 class UserAccessTokenDao implements Dao {
   rdsDatabaseService: RdsDatabaseService;
@@ -9,10 +9,6 @@ class UserAccessTokenDao implements Dao {
   constructor() {
     this.rdsDatabaseService = new RdsDatabaseService();
   }
-
-  async get(userId: string) {}
-
-  async getAll() {}
 
   async create(userAccessToken: UserAccessToken): Promise<UserAccessToken> {
     try {
@@ -26,7 +22,7 @@ class UserAccessTokenDao implements Dao {
 
       await this.rdsDatabaseService.beginTransaction();
       const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_USER_ACCESS_TOKENS_INSERT,
+        SQL_USER_ACCESS_TOKENS_CREATE,
         values
       );
       await this.rdsDatabaseService.commitTransaction();
@@ -38,6 +34,10 @@ class UserAccessTokenDao implements Dao {
       throw error;
     }
   }
+
+  async read(userId: string) {}
+
+  async readAll() {}
 
   async update() {}
 

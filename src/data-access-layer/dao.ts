@@ -1,9 +1,9 @@
 interface Dao {
-  get(id: string | number): void;
-
-  getAll(): void;
-
   create(object: Object): void;
+
+  read(id: string | number): void;
+
+  readAll(): void;
 
   update(): void;
 

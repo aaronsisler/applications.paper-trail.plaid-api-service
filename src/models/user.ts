@@ -12,4 +12,13 @@ interface UserDto {
   LastName: string;
 }
 
-export { User, UserDto };
+const userFactory = (userDto: UserDto): User => {
+  return {
+    userId: userDto.UserId,
+    principalId: userDto.PrincipalId,
+    firstName: userDto.FirstName,
+    lastName: userDto.LastName,
+  };
+};
+
+export { User, UserDto, userFactory };

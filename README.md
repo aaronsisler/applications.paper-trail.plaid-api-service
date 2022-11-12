@@ -12,8 +12,11 @@
 ## Class Responsibilities
 
 - app
+  - Expose REST endpoints
+  - Call services
 - data-access-layer
-  - DAOs which hold the DB Transaction and the SQL statement management
+  - DAOs orchestrate the DB Transaction and the SQL statement management
 - models
 - services
+  - Call DAOs
 - utils
