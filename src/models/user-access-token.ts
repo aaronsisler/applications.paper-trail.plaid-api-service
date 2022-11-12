@@ -1,5 +1,5 @@
 interface UserAccessToken {
-  userAuthTokenId: number;
+  userAuthTokenId?: number;
   userId: number;
   itemId: string;
   accessToken: string;

@@ -3,9 +3,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 import express, { Application, Request, Response } from "express";
-import { RdsDatabaseService } from "./data-access-layer/rds-database-service";
+
 import { User } from "./models/user";
 import { UserAccessToken } from "./models/user-access-token";
+import { TransactionService } from "./services/transaction-service";
 import { UserAccessTokenService } from "./services/user-access-token-service";
 import { UserService } from "./services/user-service";
 
@@ -69,11 +70,13 @@ app.post(
     response: Response
   ): Promise<Response<UserAccessToken>> => {
     try {
+      // TODO Verify that user exists using userId
       const { userId } = request.params;
-      const result = await new UserAccessTokenService().save({
-        ...request.body,
-        userId,
-      });
+      const { publicToken } = request.body;
+      const result = await new UserAccessTokenService().save(
+        parseInt(userId),
+        publicToken
+      );
 
       return response.send(result);
     } catch (error) {
@@ -84,46 +87,44 @@ app.post(
   }
 );
 
-app.post("/access-token", async (request: Request, response: Response) => {
-  try {
-    const { accessToken, itemId, userId } = request.body;
-
-    // await new RdsDatabaseService().oldCreate(userId, itemId, accessToken);
-
-    return response.sendStatus(201);
-  } catch (error) {
-    // console.log(error);
-    console.error("ERROR::POST /access-token");
-    return response.status(500).send(error);
-  }
-});
-
 app.get(
-  "/access-token/:userId",
-  async (request: Request, response: Response) => {
+  "/user/:userId/link-token",
+  async (
+    _request: Request,
+    response: Response
+  ): Promise<Response<UserAccessToken>> => {
     try {
-      const { userId } = request.params;
-      // const result = await new RdsDatabaseService().get(userId);
-      const result = {};
+      // TODO Verify that user exists using userId
+      const result = await new UserAccessTokenService().fetchLinkToken();
 
       return response.send(result);
     } catch (error) {
       console.log(error);
-      console.error("ERROR::GET /access-token/:userId");
+      console.error("ERROR::POST /user/:userId/link-token");
+      return response.status(500).send(error);
     }
   }
 );
 
-app.get("/access-token", async (_request: Request, response: Response) => {
-  try {
-    // const result = await new RdsDatabaseService().getAll();
-    const result = {};
-    return response.send(result);
-  } catch (error) {
-    console.log(error);
-    console.error("ERROR::GET /access-token");
+app.get(
+  "/user/:userId/transactions",
+  async (
+    request: Request,
+    response: Response
+  ): Promise<Response<UserAccessToken>> => {
+    try {
+      // TODO Verify that user exists using userId
+      const { userId } = request.params;
+      const result = await new TransactionService().getAll(parseInt(userId));
+
+      return response.send(result);
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::POST /user/:userId/transactions");
+      return response.status(500).send(error);
+    }
   }
-});
+);
 
 app.listen(port, () => {
   console.log(`App is listening on port ${port} !`);

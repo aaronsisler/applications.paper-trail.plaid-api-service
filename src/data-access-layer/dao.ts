@@ -3,7 +3,7 @@ interface Dao {
 
   read(id: string | number): void;
 
-  readAll(): void;
+  readAll(id: string | number): void;
 
   update(): void;
 
