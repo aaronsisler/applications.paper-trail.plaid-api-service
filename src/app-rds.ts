@@ -6,6 +6,7 @@ import express, { Application, Request, Response } from "express";
 
 import { User } from "./models/user";
 import { UserAccessToken } from "./models/user-access-token";
+import { TransactionBatchService } from "./services/transaction-batch-service";
 import { TransactionService } from "./services/transaction-service";
 import { UserAccessTokenService } from "./services/user-access-token-service";
 import { UserService } from "./services/user-service";
@@ -63,6 +64,25 @@ app.get(
   }
 );
 
+app.get(
+  "/user/:userId/link-token",
+  async (
+    _request: Request,
+    response: Response
+  ): Promise<Response<UserAccessToken>> => {
+    try {
+      // TODO Verify that user exists using userId
+      const result = await new UserAccessTokenService().fetchLinkToken();
+
+      return response.send(result);
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::POST /user/:userId/link-token");
+      return response.status(500).send(error);
+    }
+  }
+);
+
 app.post(
   "/user/:userId/access-token",
   async (
@@ -88,25 +108,6 @@ app.post(
 );
 
 app.get(
-  "/user/:userId/link-token",
-  async (
-    _request: Request,
-    response: Response
-  ): Promise<Response<UserAccessToken>> => {
-    try {
-      // TODO Verify that user exists using userId
-      const result = await new UserAccessTokenService().fetchLinkToken();
-
-      return response.send(result);
-    } catch (error) {
-      console.log(error);
-      console.error("ERROR::POST /user/:userId/link-token");
-      return response.status(500).send(error);
-    }
-  }
-);
-
-app.get(
   "/user/:userId/transactions",
   async (
     request: Request,
@@ -121,6 +122,26 @@ app.get(
     } catch (error) {
       console.log(error);
       console.error("ERROR::POST /user/:userId/transactions");
+      return response.status(500).send(error);
+    }
+  }
+);
+
+app.post(
+  "/user/:userId/transaction-batch",
+  async (
+    request: Request,
+    response: Response
+  ): Promise<Response<UserAccessToken>> => {
+    try {
+      // TODO Verify that user exists using userId
+      const { userId } = request.params;
+      await new TransactionBatchService().fetchTransactions(parseInt(userId));
+
+      return response.send("Success");
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::POST /user/:userId/batch");
       return response.status(500).send(error);
     }
   }

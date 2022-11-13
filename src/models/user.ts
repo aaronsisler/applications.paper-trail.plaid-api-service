@@ -6,18 +6,18 @@ interface User {
 }
 
 interface UserDto {
-  UserId: number;
-  PrincipalId: string;
-  FirstName: string;
-  LastName: string;
+  user_id: number;
+  principal_id: string;
+  first_name: string;
+  last_name: string;
 }
 
 const userFactory = (userDto: UserDto): User => {
   return {
-    userId: userDto.UserId,
-    principalId: userDto.PrincipalId,
-    firstName: userDto.FirstName,
-    lastName: userDto.LastName,
+    userId: userDto.user_id,
+    principalId: userDto.principal_id,
+    firstName: userDto.first_name,
+    lastName: userDto.last_name,
   };
 };
 

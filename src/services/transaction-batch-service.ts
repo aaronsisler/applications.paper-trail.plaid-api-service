@@ -6,15 +6,40 @@ import {
 } from "plaid";
 
 import { ConfigService } from "./config-service";
+import { TransactionDao } from "../data-access-layer/transaction-dao";
+import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
+import { UserAccessToken } from "../models/user-access-token";
 
-class AccountTransactionService {
+class TransactionBatchService {
   client: PlaidApi;
+  transactionDao: TransactionDao;
+  userAccessTokenDao: UserAccessTokenDao;
 
   constructor() {
     this.client = new PlaidApi(ConfigService.getClientConfig());
+    this.transactionDao = new TransactionDao();
+    this.userAccessTokenDao = new UserAccessTokenDao();
   }
 
-  async getAll(accessToken: string) {
+  async fetchTransactions(userId: number) {
+    try {
+      // Fetch all accessTokens per userId
+      const userAccessTokens: UserAccessToken[] =
+        await this.userAccessTokenDao.readAll(userId);
+      // Iterate over accessTokens and get transactions
+      console.log(userAccessTokens);
+      userAccessTokens.map(async (userAccessToken) => {
+        // await this.fecthAccountTransactions(userAccessToken.accessToken);
+      });
+
+      // Save Transactions
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::AccountTransactionService::batch");
+    }
+  }
+
+  private async fecthAccountTransactions(accessToken: string) {
     try {
       // Set cursor to empty to receive all historical updates
       let cursor = null;
@@ -34,8 +59,7 @@ class AccountTransactionService {
         const plaidResponse: any = await this.client.transactionsSync(request);
         const transactionsSyncResponse: TransactionsSyncResponse =
           plaidResponse?.data;
-        // console.log("transactionsSyncResponse");
-        // console.log(transactionsSyncResponse);
+
         // Add this page of results
         added = added.concat(transactionsSyncResponse.added);
         modified = modified.concat(transactionsSyncResponse.modified);
@@ -47,6 +71,7 @@ class AccountTransactionService {
 
       // Return 8 transactions
       const recentlyAdded = [...added].slice(-8);
+      console.log(recentlyAdded);
       return { transactions: recentlyAdded };
     } catch (error) {
       console.log(error);
@@ -55,4 +80,4 @@ class AccountTransactionService {
   }
 }
 
-export { AccountTransactionService };
+export { TransactionBatchService };

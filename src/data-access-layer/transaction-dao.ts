@@ -1,6 +1,6 @@
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
-import {} from "./sql-statements";
+import { SQL_TRANSACTIONS_CREATE } from "./sql-statements";
 
 class TransactionDao implements Dao {
   rdsDatabaseService: RdsDatabaseService;
@@ -11,7 +11,18 @@ class TransactionDao implements Dao {
 
   async create() {
     try {
+      const values = [[]];
+
+      await this.rdsDatabaseService.beginTransaction();
+      const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
+        SQL_TRANSACTIONS_CREATE,
+        values
+      );
+      await this.rdsDatabaseService.commitTransaction();
+
+      return {};
     } catch (error) {
+      await this.rdsDatabaseService.rollbackTransaction();
       console.error("ERROR::TransactionDao::create");
       throw error;
     }
