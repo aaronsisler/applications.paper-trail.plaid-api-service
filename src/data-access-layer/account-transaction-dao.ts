@@ -1,8 +1,8 @@
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
-import { SQL_TRANSACTIONS_CREATE } from "./sql-statements";
+import { SQL_ACCOUNT_TRANSACTION_CREATE } from "./sql-statements";
 
-class TransactionDao implements Dao {
+class AccountTransactionDao implements Dao {
   rdsDatabaseService: RdsDatabaseService;
 
   constructor() {
@@ -15,7 +15,7 @@ class TransactionDao implements Dao {
 
       await this.rdsDatabaseService.beginTransaction();
       const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_TRANSACTIONS_CREATE,
+        SQL_ACCOUNT_TRANSACTION_CREATE,
         values
       );
       await this.rdsDatabaseService.commitTransaction();
@@ -23,7 +23,7 @@ class TransactionDao implements Dao {
       return {};
     } catch (error) {
       await this.rdsDatabaseService.rollbackTransaction();
-      console.error("ERROR::TransactionDao::create");
+      console.error("ERROR::AccountTransactionDao::create");
       throw error;
     }
   }
@@ -31,7 +31,7 @@ class TransactionDao implements Dao {
   async read(userId: number) {
     try {
     } catch (error) {
-      console.error("ERROR::TransactionDao::read");
+      console.error("ERROR::AccountTransactionDao::read");
       throw error;
     }
   }
@@ -39,7 +39,7 @@ class TransactionDao implements Dao {
   async readAll(itemId: string) {
     try {
     } catch (error) {
-      console.error("ERROR::TransactionDao::readAll");
+      console.error("ERROR::AccountTransactionDao::readAll");
       throw error;
     }
   }
@@ -47,7 +47,7 @@ class TransactionDao implements Dao {
   async update() {
     try {
     } catch (error) {
-      console.error("ERROR::TransactionDao::update");
+      console.error("ERROR::AccountTransactionDao::update");
       throw error;
     }
   }
@@ -55,10 +55,10 @@ class TransactionDao implements Dao {
   async delete() {
     try {
     } catch (error) {
-      console.error("ERROR::TransactionDao::delete");
+      console.error("ERROR::AccountTransactionDao::delete");
       throw error;
     }
   }
 }
 
-export { TransactionDao };
+export { AccountTransactionDao };

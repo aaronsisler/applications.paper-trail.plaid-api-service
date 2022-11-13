@@ -1,7 +1,7 @@
 import { User, userFactory } from "../models/user";
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
-import { SQL_USERS_CREATE, SQL_USERS_READ } from "./sql-statements";
+import { SQL_USER_CREATE, SQL_USER_READ } from "./sql-statements";
 
 class UserDao implements Dao {
   rdsDatabaseService: RdsDatabaseService;
@@ -16,7 +16,7 @@ class UserDao implements Dao {
 
       await this.rdsDatabaseService.beginTransaction();
       const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_USERS_CREATE,
+        SQL_USER_CREATE,
         values
       );
       await this.rdsDatabaseService.commitTransaction();
@@ -34,7 +34,7 @@ class UserDao implements Dao {
       const values = [userId];
 
       const [result] = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_USERS_READ,
+        SQL_USER_READ,
         values
       );
 

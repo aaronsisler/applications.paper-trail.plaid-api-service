@@ -3,7 +3,7 @@ import { Configuration, PlaidApi } from "plaid";
 import { ConfigService } from "./config-service";
 import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
 import { UserAccessToken } from "../models/user-access-token";
-import { TransactionDao } from "../data-access-layer/transaction-dao";
+import { TransactionDao } from "../data-access-layer/account-transaction-dao";
 
 class TransactionService {
   client: PlaidApi;

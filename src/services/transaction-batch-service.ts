@@ -2,23 +2,32 @@ import {
   PlaidApi,
   RemovedTransaction,
   Transaction,
+  TransactionsSyncRequest,
   TransactionsSyncResponse,
 } from "plaid";
 
 import { ConfigService } from "./config-service";
-import { TransactionDao } from "../data-access-layer/transaction-dao";
+import { AccountTransactionDao } from "../data-access-layer/account-transaction-dao";
 import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
 import { UserAccessToken } from "../models/user-access-token";
 
 class TransactionBatchService {
   client: PlaidApi;
-  transactionDao: TransactionDao;
+  accountTransactionDao: AccountTransactionDao;
   userAccessTokenDao: UserAccessTokenDao;
 
   constructor() {
     this.client = new PlaidApi(ConfigService.getClientConfig());
-    this.transactionDao = new TransactionDao();
+    this.accountTransactionDao = new AccountTransactionDao();
     this.userAccessTokenDao = new UserAccessTokenDao();
+  }
+
+  async orchestrateTransactionBatch(userId: number) {
+    // Get added transactions
+    // Get modified transactions
+    // Get deleted transactions
+    // Trigger DQ Checks
+    // Migrate pristine transactions to main transactions table
   }
 
   async fetchTransactions(userId: number) {
@@ -27,22 +36,21 @@ class TransactionBatchService {
       const userAccessTokens: UserAccessToken[] =
         await this.userAccessTokenDao.readAll(userId);
       // Iterate over accessTokens and get transactions
-      console.log(userAccessTokens);
       userAccessTokens.map(async (userAccessToken) => {
-        // await this.fecthAccountTransactions(userAccessToken.accessToken);
+        await this.fetchAccountTransactions(userAccessToken.accessToken);
       });
 
       // Save Transactions
     } catch (error) {
       console.log(error);
-      console.error("ERROR::AccountTransactionService::batch");
+      console.error("ERROR::TransactionBatchService::batch");
     }
   }
 
-  private async fecthAccountTransactions(accessToken: string) {
+  private async fetchAccountTransactions(accessToken: string) {
     try {
       // Set cursor to empty to receive all historical updates
-      let cursor = null;
+      let cursor = undefined;
 
       // New transaction updates since "cursor"
       let added: Transaction[] = [];
@@ -52,9 +60,10 @@ class TransactionBatchService {
       let hasMore = true;
       // Iterate through each page of new transaction updates for item
       while (hasMore) {
-        const request: any = {
+        const request: TransactionsSyncRequest = {
           access_token: accessToken,
           cursor: cursor,
+          count: 10,
         };
         const plaidResponse: any = await this.client.transactionsSync(request);
         const transactionsSyncResponse: TransactionsSyncResponse =

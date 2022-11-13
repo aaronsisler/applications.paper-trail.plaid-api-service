@@ -5,8 +5,8 @@ import {
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
 import {
-  SQL_USER_ACCESS_TOKENS_CREATE,
-  SQL_USER_ACCESS_TOKENS_READ_ALL,
+  SQL_USER_ACCESS_TOKEN_CREATE,
+  SQL_USER_ACCESS_TOKEN_READ_ALL,
 } from "./sql-statements";
 
 class UserAccessTokenDao implements Dao {
@@ -28,7 +28,7 @@ class UserAccessTokenDao implements Dao {
 
       await this.rdsDatabaseService.beginTransaction();
       const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_USER_ACCESS_TOKENS_CREATE,
+        SQL_USER_ACCESS_TOKEN_CREATE,
         values
       );
       await this.rdsDatabaseService.commitTransaction();
@@ -48,7 +48,7 @@ class UserAccessTokenDao implements Dao {
       const values = [[userId]];
 
       const results = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_USER_ACCESS_TOKENS_READ_ALL,
+        SQL_USER_ACCESS_TOKEN_READ_ALL,
         values
       );
 
@@ -57,7 +57,6 @@ class UserAccessTokenDao implements Dao {
       results.forEach((result: any) => {
         userAccessTokens.push(userAccessTokenFactory(result));
       });
-      console.log(userAccessTokens);
 
       return userAccessTokens;
     } catch (error) {

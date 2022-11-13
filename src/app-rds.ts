@@ -107,6 +107,27 @@ app.post(
   }
 );
 
+app.post(
+  "/user/:userId/transaction-batch",
+  async (
+    request: Request,
+    response: Response
+  ): Promise<Response<UserAccessToken>> => {
+    try {
+      // TODO Verify that user exists using userId
+      const { userId } = request.params;
+      await new TransactionBatchService().fetchTransactions(parseInt(userId));
+
+      return response.send("Success");
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::POST /user/:userId/transaction-batch");
+      return response.status(500).send(error);
+    }
+  }
+);
+
+// Not implemented yet given batch work
 app.get(
   "/user/:userId/transactions",
   async (
@@ -122,26 +143,6 @@ app.get(
     } catch (error) {
       console.log(error);
       console.error("ERROR::POST /user/:userId/transactions");
-      return response.status(500).send(error);
-    }
-  }
-);
-
-app.post(
-  "/user/:userId/transaction-batch",
-  async (
-    request: Request,
-    response: Response
-  ): Promise<Response<UserAccessToken>> => {
-    try {
-      // TODO Verify that user exists using userId
-      const { userId } = request.params;
-      await new TransactionBatchService().fetchTransactions(parseInt(userId));
-
-      return response.send("Success");
-    } catch (error) {
-      console.log(error);
-      console.error("ERROR::POST /user/:userId/batch");
       return response.status(500).send(error);
     }
   }
