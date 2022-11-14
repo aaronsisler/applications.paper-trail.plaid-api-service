@@ -69,6 +69,19 @@ class RdsDatabaseService {
       throw error;
     }
   }
+
+  async executeUpdateSqlStatement(sqlStatement: string, values: any) {
+    try {
+      const query = promisify(this.pool.query).bind(this.pool);
+      const result = await query(sqlStatement, values);
+
+      return result;
+    } catch (error) {
+      console.log(error);
+      console.error("ERROR::RdsDatabaseService::executeSqlStatement");
+      throw error;
+    }
+  }
 }
 
 export { RdsDatabaseService };

@@ -37,7 +37,7 @@ class TransactionBatchService {
         await this.userAccessTokenDao.readAll(userId);
       // Iterate over accessTokens and get transactions
       userAccessTokens.map(async (userAccessToken) => {
-        await this.fetchAccountTransactions(userAccessToken.accessToken);
+        await this.fetchAccountTransactions(userAccessToken);
       });
 
       // Save Transactions
@@ -47,10 +47,11 @@ class TransactionBatchService {
     }
   }
 
-  private async fetchAccountTransactions(accessToken: string) {
+  private async fetchAccountTransactions(userAccessToken: UserAccessToken) {
     try {
-      // Set cursor to empty to receive all historical updates
-      let cursor = undefined;
+      // If cursor is empty, we will receive all historical updates
+      // let cursor = userAccessToken.lastCursor;
+      let cursor = "new-cursor";
 
       // New transaction updates since "cursor"
       let added: Transaction[] = [];
@@ -58,30 +59,46 @@ class TransactionBatchService {
       // Removed transaction ids
       let removed: RemovedTransaction[] = [];
       let hasMore = true;
+      let counter = 1;
       // Iterate through each page of new transaction updates for item
-      while (hasMore) {
-        const request: TransactionsSyncRequest = {
-          access_token: accessToken,
-          cursor: cursor,
-          count: 10,
-        };
-        const plaidResponse: any = await this.client.transactionsSync(request);
-        const transactionsSyncResponse: TransactionsSyncResponse =
-          plaidResponse?.data;
+      // while (hasMore) {
+      //   const request: TransactionsSyncRequest = {
+      //     access_token: userAccessToken.accessToken,
+      //     cursor: cursor,
+      //     count: 10,
+      //   };
+      //   const plaidResponse: any = await this.client.transactionsSync(request);
+      //   const transactionsSyncResponse: TransactionsSyncResponse =
+      //     plaidResponse?.data;
 
-        // Add this page of results
-        added = added.concat(transactionsSyncResponse.added);
-        modified = modified.concat(transactionsSyncResponse.modified);
-        removed = removed.concat(transactionsSyncResponse.removed);
-        hasMore = transactionsSyncResponse.has_more;
-        // Update cursor to the next cursor
-        cursor = transactionsSyncResponse.next_cursor;
-      }
+      //   // Add this page of results
+      //   added = added.concat(transactionsSyncResponse.added);
+      //   modified = modified.concat(transactionsSyncResponse.modified);
+      //   removed = removed.concat(transactionsSyncResponse.removed);
+      //   hasMore = transactionsSyncResponse.has_more;
+      //   // Update cursor to the next cursor
+      //   cursor = transactionsSyncResponse.next_cursor;
+      //   counter++;
+      // }
 
-      // Return 8 transactions
-      const recentlyAdded = [...added].slice(-8);
-      console.log(recentlyAdded);
-      return { transactions: recentlyAdded };
+      console.log(userAccessToken);
+
+      await this.userAccessTokenDao.update(
+        "last_cursor",
+        cursor,
+        userAccessToken.userAuthTokenId
+      );
+
+      console.log("added");
+      console.log(added.length);
+      console.log("modified");
+      console.log(modified.length);
+      console.log("removed");
+      console.log(removed.length);
+      console.log("counter");
+      console.log(counter);
+      console.log("cursor");
+      console.log(cursor);
     } catch (error) {
       console.log(error);
       console.error("ERROR::AccountTransactionService::getAll");

@@ -5,7 +5,7 @@ interface Dao {
 
   readAll(id: string | number): void;
 
-  update(): void;
+  update(updateKey: string, updateValue: any, id: number): void;
 
   delete(): void;
 }
