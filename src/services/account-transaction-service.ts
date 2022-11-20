@@ -4,7 +4,7 @@ import { ConfigService } from "./config-service";
 import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
 import { AccountTransactionDao } from "../data-access-layer/account-transaction-dao";
 
-class TransactionService {
+class AccountTransactionService {
   client: PlaidApi;
   accountTransactionDao: AccountTransactionDao;
   userAccessTokenDao: UserAccessTokenDao;
@@ -24,9 +24,9 @@ class TransactionService {
       return transactions;
     } catch (error) {
       console.log(error);
-      console.error("ERROR::TransactionService::getAll");
+      console.error("ERROR::AccountTransactionService::getAll");
     }
   }
 }
 
-export { TransactionService };
+export { AccountTransactionService };

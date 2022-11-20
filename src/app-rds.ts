@@ -6,8 +6,8 @@ import express, { Application, Request, Response } from "express";
 
 import { User } from "./models/user";
 import { UserAccessToken } from "./models/user-access-token";
-import { TransactionBatchService } from "./services/transaction-batch-service";
-import { TransactionService } from "./services/transaction-service";
+import { AccountTransactionBatchService } from "./services/account-transaction-batch-service";
+import { AccountTransactionService } from "./services/account-transaction-service";
 import { UserAccessTokenService } from "./services/user-access-token-service";
 import { UserService } from "./services/user-service";
 
@@ -116,7 +116,9 @@ app.post(
     try {
       // TODO Verify that user exists using userId
       const { userId } = request.params;
-      await new TransactionBatchService().fetchTransactions(parseInt(userId));
+      await new AccountTransactionBatchService().fetchTransactions(
+        parseInt(userId)
+      );
 
       return response.send("Success");
     } catch (error) {
@@ -137,7 +139,9 @@ app.get(
     try {
       // TODO Verify that user exists using userId
       const { userId } = request.params;
-      const result = await new TransactionService().getAll(parseInt(userId));
+      const result = await new AccountTransactionService().getAll(
+        parseInt(userId)
+      );
 
       return response.send(result);
     } catch (error) {

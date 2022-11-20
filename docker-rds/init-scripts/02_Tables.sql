@@ -8,6 +8,12 @@ DROP TABLE IF EXISTS ACCOUNT_TRANSACTION;
 
 DROP TABLE IF EXISTS ACCOUNT_TRANSACTION_CATEGORY;
 
+DROP TABLE IF EXISTS STG_ACCOUNT_TRANSACTION;
+
+DROP TABLE IF EXISTS STG_ACCOUNT_TRANSACTION_REMOVED;
+
+DROP TABLE IF EXISTS STG_ACCOUNT_TRANSACTION_CATEGORY;
+
 CREATE TABLE USER (
     user_id int NOT NULL AUTO_INCREMENT,
     principal_id varchar(255) NOT NULL,
@@ -51,28 +57,45 @@ CREATE TABLE ACCOUNT_TRANSACTION_CATEGORY (
     CONSTRAINT fk_tbl_acct_trans_to_acct_trans_cat_col_acct_trans_cat_id FOREIGN KEY (account_transaction_id) REFERENCES ACCOUNT_TRANSACTION(account_transaction_id) ON DELETE CASCADE
 );
 
-CREATE TABLE STG_ACCOUNT_TRANSACTION (
-    stg_account_transaction_id int NOT NULL AUTO_INCREMENT,
+CREATE TABLE STG_ADDED_ACCOUNT_TRANSACTION (
+    stg_added_account_transaction_id int NOT NULL AUTO_INCREMENT,
     user_id int NOT NULL,
     transaction_id varchar(255) NOT NULL,
     account_id varchar(255) NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     account_transaction_date varchar(255) NOT NULL,
-    account_transaction_datetime varchar(255),
+    account_transaction_year int NOT NULL,
+    account_transaction_month int NOT NULL,
+    account_transaction_day int NOT NULL,
     pending BOOLEAN NOT NULL DEFAULT FALSE,
     merchant_name varchar(255) NOT NULL,
     merchant_name_detailed varchar(255),
     category_id varchar(255),
-    is_added BOOLEAN NOT NULL DEFAULT TRUE,
-    is_modified BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (stg_account_transaction_id)
+    PRIMARY KEY (stg_added_account_transaction_id)
 );
 
-CREATE TABLE STG_ACCOUNT_TRANSACTION_DELETED (
-    stg_account_transaction_id int NOT NULL AUTO_INCREMENT,
+CREATE TABLE STG_MODIFIED_ACCOUNT_TRANSACTION (
+    stg_modified_account_transaction_id int NOT NULL AUTO_INCREMENT,
     user_id int NOT NULL,
     transaction_id varchar(255) NOT NULL,
-    PRIMARY KEY (stg_account_transaction_id)
+    account_id varchar(255) NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    account_transaction_date varchar(255) NOT NULL,
+    account_transaction_year int NOT NULL,
+    account_transaction_month int NOT NULL,
+    account_transaction_day int NOT NULL,
+    pending BOOLEAN NOT NULL DEFAULT FALSE,
+    merchant_name varchar(255) NOT NULL,
+    merchant_name_detailed varchar(255),
+    category_id varchar(255),
+    PRIMARY KEY (stg_modified_account_transaction_id)
+);
+
+CREATE TABLE STG_REMOVED_ACCOUNT_TRANSACTION (
+    stg_removed_account_transaction_id int NOT NULL AUTO_INCREMENT,
+    user_id int NOT NULL,
+    transaction_id varchar(255) NOT NULL,
+    PRIMARY KEY (stg_removed_account_transaction_id)
 );
 
 CREATE TABLE STG_ACCOUNT_TRANSACTION_CATEGORY (
