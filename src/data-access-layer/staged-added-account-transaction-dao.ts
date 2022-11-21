@@ -1,6 +1,9 @@
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
-import { SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE } from "./sql-statements";
+import {
+  SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE,
+  SQL_STG_MODIFIED_ACCOUNT_TRANSACTION_CREATE_SPROC,
+} from "./sql-statements";
 import { StagedAddedAccountTransaction } from "../models/staged-added-account-transaction";
 
 class StagedAddedAccountTransactionDao implements Dao {
@@ -29,14 +32,15 @@ class StagedAddedAccountTransactionDao implements Dao {
             accountTransaction.merchantName,
             accountTransaction.merchantNameDetailed,
             accountTransaction.categoryId,
+            null,
           ]);
         }
       );
 
       await this.rdsDatabaseService.beginTransaction();
       const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE,
-        values
+        SQL_STG_MODIFIED_ACCOUNT_TRANSACTION_CREATE_SPROC,
+        values[0]
       );
       await this.rdsDatabaseService.commitTransaction();
 

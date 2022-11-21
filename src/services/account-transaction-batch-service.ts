@@ -71,74 +71,79 @@ class AccountTransactionBatchService {
       let modifiedCounter = 0;
       let removedCounter = 0;
       // Iterate through each page of new transaction updates for item
-      while (hasMore) {
-        const request: TransactionsSyncRequest = {
-          access_token: userAccessToken.accessToken,
-          cursor,
-          count: 20,
-        };
-        const plaidResponse: any = await this.client.transactionsSync(request);
-        const transactionsSyncResponse: TransactionsSyncResponse =
-          plaidResponse?.data;
+      // while (hasMore) {
+      const request: TransactionsSyncRequest = {
+        access_token: userAccessToken.accessToken,
+        cursor,
+        count: 20,
+      };
+      const plaidResponse: any = await this.client.transactionsSync(request);
+      const transactionsSyncResponse: TransactionsSyncResponse =
+        plaidResponse?.data;
 
-        // New transaction updates since "cursor"
-        const added: Transaction[] = transactionsSyncResponse.added || [];
-        const modified: Transaction[] = transactionsSyncResponse.modified || [];
-        // Removed transaction ids
-        const removed: RemovedTransaction[] =
-          transactionsSyncResponse.removed || [];
+      // New transaction updates since "cursor"
+      const added: Transaction[] = transactionsSyncResponse.added || [];
+      const modified: Transaction[] = transactionsSyncResponse.modified || [];
+      // Removed transaction ids
+      const removed: RemovedTransaction[] =
+        transactionsSyncResponse.removed || [];
 
-        if (added.length > 0) {
-          const transformedAdded = added.map((plaidTransaction) =>
-            stagedAddedAccountTransactionFactory(
-              plaidTransaction,
-              userAccessToken.userId
-            )
-          );
+      if (added.length > 0) {
+        const transformedAdded = added.map((plaidTransaction) =>
+          stagedAddedAccountTransactionFactory(
+            plaidTransaction,
+            userAccessToken.userId
+          )
+        );
 
-          await this.stagedAddedAccountTransactionDao.create(transformedAdded);
-        }
-
-        if (modified.length > 0) {
-          const transformedModified = added.map((plaidTransaction) =>
-            modifiedAccountTransactionFactory(
-              plaidTransaction,
-              userAccessToken.userId,
-              true
-            )
-          );
-
-          await this.stagedModifiedAccountTransactionDao.create(
-            transformedModified
-          );
-        }
-
-        if (removed.length > 0) {
-          const transformedRemoved = added.map((plaidTransaction) =>
-            stagedRemovedAccountTransactionFactory(
-              plaidTransaction,
-              userAccessToken.userId
-            )
-          );
-
-          await this.stagedRemovedAccountTransactionDao.create(
-            transformedRemoved
-          );
-        }
-
-        hasMore = transactionsSyncResponse.has_more;
-        // Update cursor to the next cursor
-        cursor = transactionsSyncResponse.next_cursor;
-        whileLoopCounter++;
+        await this.stagedAddedAccountTransactionDao.create(transformedAdded);
+        addedCounter = addedCounter + added.length;
       }
+
+      // if (modified.length > 0) {
+      //   const transformedModified = added.map((plaidTransaction) =>
+      //     modifiedAccountTransactionFactory(
+      //       plaidTransaction,
+      //       userAccessToken.userId,
+      //       true
+      //     )
+      //   );
+
+      //   await this.stagedModifiedAccountTransactionDao.create(
+      //     transformedModified
+      //   );
+
+      //   modifiedCounter = modifiedCounter + modified.length;
+      // }
+
+      // if (removed.length > 0) {
+      //   const transformedRemoved = added.map((plaidTransaction) =>
+      //     stagedRemovedAccountTransactionFactory(
+      //       plaidTransaction,
+      //       userAccessToken.userId
+      //     )
+      //   );
+
+      //   await this.stagedRemovedAccountTransactionDao.create(
+      //     transformedRemoved
+      //   );
+
+      //   removedCounter = removedCounter + removed.length;
+      // }
+
+      hasMore = transactionsSyncResponse.has_more;
+      // Update cursor to the next cursor
+      cursor = transactionsSyncResponse.next_cursor;
+      whileLoopCounter++;
+      // }
 
       console.log(userAccessToken);
 
-      await this.userAccessTokenDao.update(
-        "last_cursor",
-        cursor,
-        userAccessToken.userAuthTokenId
-      );
+      // await this.userAccessTokenDao.update(
+      //   "last_cursor",
+      //   cursor,
+      //   userAccessToken.userAuthTokenId
+      // );
 
       console.log("addedCounter");
       console.log(addedCounter);
