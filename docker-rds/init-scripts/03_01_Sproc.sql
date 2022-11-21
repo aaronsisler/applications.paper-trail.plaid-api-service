@@ -30,7 +30,8 @@ INSERT INTO
     pending,
     merchant_name,
     merchant_name_detailed,
-    category_id
+    category_id,
+    category
   )
 VALUES
   (
@@ -45,7 +46,8 @@ VALUES
     pending,
     merchant_name,
     merchant_name_detailed,
-    category_id
+    category_id,
+    category
   );
 
 END //

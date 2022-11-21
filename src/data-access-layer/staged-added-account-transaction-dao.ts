@@ -32,7 +32,7 @@ class StagedAddedAccountTransactionDao implements Dao {
             accountTransaction.merchantName,
             accountTransaction.merchantNameDetailed,
             accountTransaction.categoryId,
-            null,
+            accountTransaction.category,
           ]);
         }
       );
