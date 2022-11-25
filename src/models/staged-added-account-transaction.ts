@@ -17,29 +17,26 @@ interface StagedAddedAccountTransaction {
   pending: boolean;
   merchantName: string;
   categoryId: string | null;
-  category: string[] | null;
+  category: string[];
   merchantNameDetailed?: string | null;
-  isAdded: boolean;
-  isModified: boolean;
 }
 
 const stagedAddedAccountTransactionFactory = (
   transactionDto: PlaidTransaction,
-  userId: number,
-  isModified: boolean = false
+  userId: number
 ): StagedAddedAccountTransaction => {
   const date = parseAccountTransactionDate(
-    transactionDto.authorized_date || "99999999"
+    transactionDto.authorized_date || "9999-99-99"
   );
 
   return {
     accountTransactionId: undefined,
     userId,
     accountId: transactionDto.account_id,
-    category: transactionDto.category,
+    category: transactionDto.category || [],
     categoryId: transactionDto.category_id,
     amount: transactionDto.amount,
-    accountTransactionDate: transactionDto.date,
+    accountTransactionDate: date.fullDate,
     accountTransactionYear: date.year,
     accountTransactionMonth: date.month,
     accountTransactionDay: date.day,
@@ -47,8 +44,6 @@ const stagedAddedAccountTransactionFactory = (
     transactionId: transactionDto.transaction_id,
     merchantName: transactionDto.name,
     merchantNameDetailed: transactionDto.merchant_name,
-    isAdded: !isModified,
-    isModified,
   };
 };
 

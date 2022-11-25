@@ -19,24 +19,26 @@ export const SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE = `INSERT INTO ${DATABASE_
   pending,
   merchant_name,
   merchant_name_detailed,
-  category_id
-) 
-VALUES ?`;
+  category_id,
+  category
+  ) 
+  VALUES ?`;
 
 export const SQL_STG_MODIFIED_ACCOUNT_TRANSACTION_CREATE = `INSERT INTO ${DATABASE_TABLE.STG_MODIFIED_ACCOUNT_TRANSACTION} 
-(
-  user_id,
-  transaction_id,
-  account_id,
-  amount,
-  account_transaction_date,
-  account_transaction_year,
-  account_transaction_month,
-  account_transaction_day,
-  pending,
-  merchant_name,
-  merchant_name_detailed,
-  category_id
+  (
+    user_id,
+    transaction_id,
+    account_id,
+    amount,
+    account_transaction_date,
+    account_transaction_year,
+    account_transaction_month,
+    account_transaction_day,
+    pending,
+    merchant_name,
+    merchant_name_detailed,
+    category_id,
+    category
 ) 
 VALUES ?`;
 

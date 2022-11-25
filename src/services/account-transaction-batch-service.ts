@@ -104,8 +104,7 @@ class AccountTransactionBatchService {
       //   const transformedModified = added.map((plaidTransaction) =>
       //     modifiedAccountTransactionFactory(
       //       plaidTransaction,
-      //       userAccessToken.userId,
-      //       true
+      //       userAccessToken.userId
       //     )
       //   );
 

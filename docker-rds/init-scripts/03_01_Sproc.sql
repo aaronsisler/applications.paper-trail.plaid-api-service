@@ -15,7 +15,7 @@ CREATE PROCEDURE sp_Create_StagedAddedAccountTransactions(
   IN merchant_name VARCHAR(255),
   IN merchant_name_detailed VARCHAR(255),
   IN category_id VARCHAR(255),
-  IN category VARCHAR(255)
+  IN category VARCHAR(1000)
 ) BEGIN
 INSERT INTO
   STG_ADDED_ACCOUNT_TRANSACTION (

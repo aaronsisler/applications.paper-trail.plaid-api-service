@@ -29,14 +29,13 @@ class StagedModifiedAccountTransactionDao implements Dao {
             accountTransaction.merchantName,
             accountTransaction.merchantNameDetailed,
             accountTransaction.categoryId,
-            accountTransaction.isAdded,
-            accountTransaction.isModified,
+            accountTransaction.category.join(","),
           ]);
         }
       );
 
       await this.rdsDatabaseService.beginTransaction();
-      const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
+      await this.rdsDatabaseService.executeSqlStatement(
         SQL_STG_MODIFIED_ACCOUNT_TRANSACTION_CREATE,
         values
       );

@@ -1,4 +1,5 @@
 interface AccountTransactionDateDto {
+  fullDate: string;
   year: number;
   month: number;
   day: number;
@@ -13,7 +14,7 @@ const parseAccountTransactionDate = (
   const month = parseInt(fullDate.substring(5, 7));
   const day = parseInt(fullDate.substring(8, 10));
 
-  return { year, month, day };
+  return { fullDate, year, month, day };
 };
 
 export { AccountTransactionDateDto, parseAccountTransactionDate };
