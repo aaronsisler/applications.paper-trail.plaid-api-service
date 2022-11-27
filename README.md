@@ -20,3 +20,8 @@
 - services
   - Call DAOs
 - utils
+
+## TODOs
+
+- Need to see how to get the account the transaction is linked to set correctly, i.e. account_id?
+- Need to see if we can get account the user_access_token is linked to somehow in the table as well

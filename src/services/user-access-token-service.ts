@@ -2,6 +2,7 @@ import { PlaidApi, LinkTokenCreateResponse } from "plaid";
 
 import { ConfigService } from "./config-service";
 import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
+import { UserAccessToken } from "../models/user-access-token";
 
 class UserAccessTokenService {
   client: PlaidApi;
@@ -12,15 +13,20 @@ class UserAccessTokenService {
     this.userAccessTokenDao = new UserAccessTokenDao();
   }
 
-  async save(userId: number, publicToken: string) {
+  async save(userId: number, publicToken: string): Promise<UserAccessToken> {
     try {
       const { accessToken, itemId } = await this.fetchAccessToken(publicToken);
 
-      return await this.userAccessTokenDao.create({
-        userId,
-        itemId,
-        accessToken,
-      });
+      const userAccessToken: UserAccessToken =
+        await this.userAccessTokenDao.create({
+          userId,
+          itemId,
+          accessToken,
+        });
+
+      console.info("SUCCESS::UserService::save");
+
+      return userAccessToken;
     } catch (error) {
       console.error("ERROR::UserService::save");
       throw error;

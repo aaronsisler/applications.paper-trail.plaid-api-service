@@ -1,6 +1,6 @@
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
-import { SQL_STG_MODIFIED_ACCOUNT_TRANSACTION_CREATE } from "./sql-statements";
+import { SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE } from "./sql-statements";
 import { StagedAddedAccountTransaction } from "../models/staged-added-account-transaction";
 
 class StagedAddedAccountTransactionDao implements Dao {
@@ -35,10 +35,13 @@ class StagedAddedAccountTransactionDao implements Dao {
       );
 
       await this.rdsDatabaseService.beginTransaction();
-      const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_STG_MODIFIED_ACCOUNT_TRANSACTION_CREATE,
+      // const { insertId } =
+      const response = await this.rdsDatabaseService.executeSqlStatement(
+        SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE,
         values
       );
+
+      console.log(response);
 
       await this.rdsDatabaseService.commitTransaction();
 

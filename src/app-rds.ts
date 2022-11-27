@@ -13,9 +13,9 @@ import { UserService } from "./services/user-service";
 
 console.log(`Your PROFILE is ${process.env.PROFILE}`); // undefined
 
-if (process.env.PROFILE == "local") {
-  dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
-}
+dotenv.config({
+  path: path.resolve(__dirname, `../.env.${process.env.PROFILE}`),
+});
 
 const app: Application = express();
 app.use(cors());
