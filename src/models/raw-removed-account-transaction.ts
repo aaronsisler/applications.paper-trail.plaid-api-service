@@ -1,15 +1,15 @@
 import { Transaction as PlaidTransaction } from "plaid";
 
-interface StagedRemovedAccountTransaction {
+interface RawRemovedAccountTransaction {
   accountTransactionId?: number;
   transactionId: string;
   userId?: number;
 }
 
-const stagedRemovedAccountTransactionFactory = (
+const rawRemovedAccountTransactionFactory = (
   transactionDto: PlaidTransaction,
   userId: number
-): StagedRemovedAccountTransaction => {
+): RawRemovedAccountTransaction => {
   return {
     accountTransactionId: undefined,
     userId,
@@ -17,7 +17,4 @@ const stagedRemovedAccountTransactionFactory = (
   };
 };
 
-export {
-  StagedRemovedAccountTransaction,
-  stagedRemovedAccountTransactionFactory,
-};
+export { RawRemovedAccountTransaction, rawRemovedAccountTransactionFactory };

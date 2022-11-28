@@ -1,8 +1,8 @@
-DROP PROCEDURE IF EXISTS sp_Create_StagedAddedAccountTransactions;
+DROP PROCEDURE IF EXISTS sp_Create_RawAddedAccountTransactions;
 
 DELIMITER //
 
-CREATE PROCEDURE sp_Create_StagedAddedAccountTransactions(
+CREATE PROCEDURE sp_Create_RawAddedAccountTransactions(
   IN user_id INT,
   IN transaction_id VARCHAR(255),
   IN account_id VARCHAR(255),
@@ -18,7 +18,7 @@ CREATE PROCEDURE sp_Create_StagedAddedAccountTransactions(
   IN category VARCHAR(1000)
 ) BEGIN
 INSERT INTO
-  STG_ADDED_ACCOUNT_TRANSACTION (
+  RAW_ADDED_ACCOUNT_TRANSACTION (
     user_id,
     transaction_id,
     account_id,

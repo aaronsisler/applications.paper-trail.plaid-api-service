@@ -1,21 +1,21 @@
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
-import { SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE } from "./sql-statements";
-import { StagedAddedAccountTransaction } from "../models/staged-added-account-transaction";
+import { SQL_RAW_ADDED_ACCOUNT_TRANSACTION_CREATE } from "./sql-statements";
+import { RawAddedAccountTransaction } from "../models/raw-added-account-transaction";
 
-class StagedAddedAccountTransactionDao implements Dao {
+class RawAddedAccountTransactionDao implements Dao {
   rdsDatabaseService: RdsDatabaseService;
 
   constructor() {
     this.rdsDatabaseService = new RdsDatabaseService();
   }
 
-  async create(accountTransactions: StagedAddedAccountTransaction[]) {
+  async create(accountTransactions: RawAddedAccountTransaction[]) {
     try {
       const values: any = [];
 
       accountTransactions.forEach(
-        (accountTransaction: StagedAddedAccountTransaction) => {
+        (accountTransaction: RawAddedAccountTransaction) => {
           values.push([
             accountTransaction.userId,
             accountTransaction.transactionId,
@@ -37,7 +37,7 @@ class StagedAddedAccountTransactionDao implements Dao {
       await this.rdsDatabaseService.beginTransaction();
       // const { insertId } =
       const response = await this.rdsDatabaseService.executeSqlStatement(
-        SQL_STG_ADDED_ACCOUNT_TRANSACTION_CREATE,
+        SQL_RAW_ADDED_ACCOUNT_TRANSACTION_CREATE,
         values
       );
 
@@ -48,7 +48,7 @@ class StagedAddedAccountTransactionDao implements Dao {
       return {};
     } catch (error) {
       await this.rdsDatabaseService.rollbackTransaction();
-      console.error("ERROR::StagedAddedAccountTransactionDao::create");
+      console.error("ERROR::RawAddedAccountTransactionDao::create");
       throw error;
     }
   }
@@ -56,7 +56,7 @@ class StagedAddedAccountTransactionDao implements Dao {
   async read(userId: number) {
     try {
     } catch (error) {
-      console.error("ERROR::StagedAddedAccountTransactionDao::read");
+      console.error("ERROR::RawAddedAccountTransactionDao::read");
       throw error;
     }
   }
@@ -64,7 +64,7 @@ class StagedAddedAccountTransactionDao implements Dao {
   async readAll(itemId: string) {
     try {
     } catch (error) {
-      console.error("ERROR::StagedAddedAccountTransactionDao::readAll");
+      console.error("ERROR::RawAddedAccountTransactionDao::readAll");
       throw error;
     }
   }
@@ -72,7 +72,7 @@ class StagedAddedAccountTransactionDao implements Dao {
   async update() {
     try {
     } catch (error) {
-      console.error("ERROR::StagedAddedAccountTransactionDao::update");
+      console.error("ERROR::RawAddedAccountTransactionDao::update");
       throw error;
     }
   }
@@ -80,10 +80,10 @@ class StagedAddedAccountTransactionDao implements Dao {
   async delete() {
     try {
     } catch (error) {
-      console.error("ERROR::StagedAddedAccountTransactionDao::delete");
+      console.error("ERROR::RawAddedAccountTransactionDao::delete");
       throw error;
     }
   }
 }
 
-export { StagedAddedAccountTransactionDao };
+export { RawAddedAccountTransactionDao };

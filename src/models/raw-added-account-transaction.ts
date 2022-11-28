@@ -1,7 +1,10 @@
 import { Transaction as PlaidTransaction } from "plaid";
-import { parseAccountTransactionDate } from "./account-transaction-date-dto";
+import {
+  AccountTransactionDateDto,
+  parseAccountTransactionDate,
+} from "./account-transaction-date-dto";
 
-interface StagedModifiedAccountTransaction {
+interface RawAddedAccountTransaction {
   accountTransactionId?: number;
   transactionId: string;
   userId?: number;
@@ -18,12 +21,12 @@ interface StagedModifiedAccountTransaction {
   merchantNameDetailed?: string | null;
 }
 
-const modifiedAccountTransactionFactory = (
+const rawAddedAccountTransactionFactory = (
   transactionDto: PlaidTransaction,
   userId: number
-): StagedModifiedAccountTransaction => {
-  const date = parseAccountTransactionDate(
-    transactionDto.authorized_date || "99999999"
+): RawAddedAccountTransaction => {
+  const date: AccountTransactionDateDto = parseAccountTransactionDate(
+    transactionDto.authorized_date || "9999-99-99"
   );
 
   return {
@@ -44,4 +47,4 @@ const modifiedAccountTransactionFactory = (
   };
 };
 
-export { StagedModifiedAccountTransaction, modifiedAccountTransactionFactory };
+export { RawAddedAccountTransaction, rawAddedAccountTransactionFactory };
