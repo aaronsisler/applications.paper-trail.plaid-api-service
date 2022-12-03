@@ -1,14 +1,19 @@
 USE PAPER_TRAIL_RECORD_DATA_LOCAL;
 
+------------------------------
+-- Foreign Key Constraints
+------------------------------
+
 DROP TABLE IF EXISTS USER_ACCESS_TOKEN;
 
 DROP TABLE IF EXISTS ACCOUNT_TRANSACTION_CATEGORY;
 
-DROP TABLE IF EXISTS ACCOUNT_TRANSACTION;
-
-DROP TABLE IF EXISTS USER;
-
 DROP TABLE IF EXISTS INSTITUITION_ACCOUNT;
+
+---------------------------------------------
+-- Only USER(user_id) Foreign Key Constraint
+---------------------------------------------
+DROP TABLE IF EXISTS ACCOUNT_TRANSACTION;
 
 DROP TABLE IF EXISTS INSTITUITION;
 
@@ -19,6 +24,16 @@ DROP TABLE IF EXISTS RAW_MODIFIED_ACCOUNT_TRANSACTION;
 DROP TABLE IF EXISTS RAW_REMOVED_ACCOUNT_TRANSACTION;
 
 DROP TABLE IF EXISTS RAW_ACCOUNT_TRANSACTION_CATEGORY;
+
+------------------
+-- Main tables
+------------------
+
+DROP TABLE IF EXISTS USER;
+
+---------------
+--  Tables
+---------------
 
 CREATE TABLE USER (
     user_id INT NOT NULL AUTO_INCREMENT,
@@ -31,32 +46,43 @@ CREATE TABLE USER (
 CREATE TABLE USER_ACCESS_TOKEN (
     user_access_token_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
-    item_id VARCHAR(255) NOT NULL,
+    institution_id INT NOT NULL,
     access_token VARCHAR(255) NOT NULL,
     last_cursor VARCHAR(255),
     PRIMARY KEY (user_access_token_id),
     INDEX index_tbl_user_access_token_col_user_id (user_id),
-    CONSTRAINT fk_tbl_user_access_token_to_user_col_user_id FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE
+    -- Constraints
+    CONSTRAINT fk_tbl_user_access_token_to_user_col_user_id 
+    FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE,
+    
+    CONSTRAINT fk_tbl_user_access_token_to_instn_col_institution_id
+    FOREIGN KEY (institution_id) REFERENCES INSTITUITION(institution_id) ON DELETE CASCADE
 );
 
 CREATE TABLE INSTITUITION (
     institution_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
     item_id VARCHAR(100) NOT NULL,
-    PRIMARY KEY (institution_id)
+    PRIMARY KEY (institution_id),
+    -- Constraints
+    CONSTRAINT fk_tbl_institution_to_user_col_user_id 
+    FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE
 )
 
 CREATE TABLE INSTITUITION_ACCOUNT (
     institution_account_id INT NOT NULL AUTO_INCREMENT,
+    institution_id INT NOT NULL,
     account_id VARCHAR(100) NOT NULL,
-    item_id VARCHAR(100) NOT NULL,
     account_mask_last_four VARCHAR(10),
     account_name VARCHAR(100) NOT NULL,
     account_official_name VARCHAR(100) NOT NULL,
     account_type VARCHAR(100) NOT NULL,
     account_subtype VARCHAR(100) NOT NULL,
-    PRIMARY KEY (institution_account_id)
+    PRIMARY KEY (institution_account_id),
+    -- Constraints
+    CONSTRAINT fk_tbl_institution_to_instn_acct_col_institution_id 
+    FOREIGN KEY (institution_id) REFERENCES INSTITUITION(institution_id) ON DELETE CASCADE
 )
-
 
 CREATE TABLE ACCOUNT_TRANSACTION (
     account_transaction_id INT NOT NULL AUTO_INCREMENT,
@@ -72,7 +98,9 @@ CREATE TABLE ACCOUNT_TRANSACTION (
     category_id VARCHAR(255),
     category VARCHAR(1000) NOT NULL,
     PRIMARY KEY (account_transaction_id),
-    CONSTRAINT fk_tbl_user_to_acct_trans_col_user_id FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE
+    -- Constraints
+    CONSTRAINT fk_tbl_user_to_acct_trans_col_user_id 
+    FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE ACCOUNT_TRANSACTION_CATEGORY (
@@ -80,7 +108,9 @@ CREATE TABLE ACCOUNT_TRANSACTION_CATEGORY (
     account_transaction_id INT NOT NULL,
     category VARCHAR(255) NOT NULL,
     PRIMARY KEY (account_transaction_category_id),
-    CONSTRAINT fk_tbl_acct_trans_to_acct_trans_cat_col_acct_trans_cat_id FOREIGN KEY (account_transaction_id) REFERENCES ACCOUNT_TRANSACTION(account_transaction_id) ON DELETE CASCADE
+    -- Constraints
+    CONSTRAINT fk_tbl_acct_trans_to_acct_trans_cat_col_acct_trans_cat_id 
+    FOREIGN KEY (account_transaction_id) REFERENCES ACCOUNT_TRANSACTION(account_transaction_id) ON DELETE CASCADE
 );
 
 CREATE TABLE RAW_ADDED_ACCOUNT_TRANSACTION (

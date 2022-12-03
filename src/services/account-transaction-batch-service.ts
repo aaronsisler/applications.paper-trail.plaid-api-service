@@ -9,27 +9,36 @@ import {
 import { ConfigService } from "./config-service";
 import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
 import { UserAccessToken } from "../models/user-access-token";
-import { rawAddedAccountTransactionFactory } from "../models/raw-added-account-transaction";
-import { rawModifiedAccountTransactionFactory } from "../models/raw-modified-account-transaction";
-import { rawRemovedAccountTransactionFactory } from "../models/raw-removed-account-transaction";
+import {
+  RawAddedAccountTransaction,
+  rawAddedAccountTransactionFactory,
+} from "../models/raw-added-account-transaction";
+import {
+  RawModifiedAccountTransaction,
+  rawModifiedAccountTransactionFactory,
+} from "../models/raw-modified-account-transaction";
+import {
+  RawRemovedAccountTransaction,
+  rawRemovedAccountTransactionFactory,
+} from "../models/raw-removed-account-transaction";
 import { RawAddedAccountTransactionDao } from "../data-access-layer/raw-added-account-transaction-dao";
-import { StagedModifiedAccountTransactionDao } from "../data-access-layer/staged-modified-account-transaction-dao";
-import { StagedRemovedAccountTransactionDao } from "../data-access-layer/staged-removed-account-transaction-dao";
+import { RawModifiedAccountTransactionDao } from "../data-access-layer/raw-modified-account-transaction-dao";
+import { RawRemovedAccountTransactionDao } from "../data-access-layer/raw-removed-account-transaction-dao";
 
 class AccountTransactionBatchService {
   client: PlaidApi;
   rawAddedAccountTransactionDao: RawAddedAccountTransactionDao;
-  stagedModifiedAccountTransactionDao: StagedModifiedAccountTransactionDao;
-  stagedRemovedAccountTransactionDao: StagedRemovedAccountTransactionDao;
+  rawModifiedAccountTransactionDao: RawModifiedAccountTransactionDao;
+  rawRemovedAccountTransactionDao: RawRemovedAccountTransactionDao;
   userAccessTokenDao: UserAccessTokenDao;
 
   constructor() {
     this.client = new PlaidApi(ConfigService.getClientConfig());
     this.rawAddedAccountTransactionDao = new RawAddedAccountTransactionDao();
-    this.stagedModifiedAccountTransactionDao =
-      new StagedModifiedAccountTransactionDao();
-    this.stagedRemovedAccountTransactionDao =
-      new StagedRemovedAccountTransactionDao();
+    this.rawModifiedAccountTransactionDao =
+      new RawModifiedAccountTransactionDao();
+    this.rawRemovedAccountTransactionDao =
+      new RawRemovedAccountTransactionDao();
     this.userAccessTokenDao = new UserAccessTokenDao();
   }
 
@@ -90,11 +99,12 @@ class AccountTransactionBatchService {
           transactionsSyncResponse.removed || [];
 
         if (added.length > 0) {
-          const transformedAdded = added.map((plaidTransaction) =>
-            rawAddedAccountTransactionFactory(
-              plaidTransaction,
-              userAccessToken.userId
-            )
+          const transformedAdded: RawAddedAccountTransaction[] = added.map(
+            (plaidTransaction) =>
+              rawAddedAccountTransactionFactory(
+                plaidTransaction,
+                userAccessToken.userId
+              )
           );
 
           await this.rawAddedAccountTransactionDao.create(transformedAdded);
@@ -102,14 +112,15 @@ class AccountTransactionBatchService {
         }
 
         if (modified.length > 0) {
-          const transformedModified = added.map((plaidTransaction) =>
-            rawModifiedAccountTransactionFactory(
-              plaidTransaction,
-              userAccessToken.userId
-            )
-          );
+          const transformedModified: RawModifiedAccountTransaction[] =
+            added.map((plaidTransaction) =>
+              rawModifiedAccountTransactionFactory(
+                plaidTransaction,
+                userAccessToken.userId
+              )
+            );
 
-          await this.stagedModifiedAccountTransactionDao.create(
+          await this.rawModifiedAccountTransactionDao.create(
             transformedModified
           );
 
@@ -117,16 +128,15 @@ class AccountTransactionBatchService {
         }
 
         if (removed.length > 0) {
-          const transformedRemoved = added.map((plaidTransaction) =>
-            rawRemovedAccountTransactionFactory(
-              plaidTransaction,
-              userAccessToken.userId
-            )
+          const transformedRemoved: RawRemovedAccountTransaction[] = added.map(
+            (plaidTransaction) =>
+              rawRemovedAccountTransactionFactory(
+                plaidTransaction,
+                userAccessToken.userId
+              )
           );
 
-          await this.stagedRemovedAccountTransactionDao.create(
-            transformedRemoved
-          );
+          await this.rawRemovedAccountTransactionDao.create(transformedRemoved);
 
           removedCounter = removedCounter + removed.length;
         }
