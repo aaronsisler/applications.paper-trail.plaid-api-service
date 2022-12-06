@@ -1,21 +1,26 @@
 interface Institution {
   institutionId: number;
   userId: number;
-  itemId: string;
+  institutionIdentifier: string;
+}
+
+interface InstitutionCreation {
+  userId: number;
+  institutionIdentifier: string;
 }
 
 interface InstitutionDto {
   institution_id: number;
   user_id: number;
-  item_id: string;
+  institution_identifier: string;
 }
 
 const institutionFactory = (institutionDto: InstitutionDto): Institution => {
   return {
     institutionId: institutionDto.institution_id,
     userId: institutionDto.user_id,
-    itemId: institutionDto.item_id,
+    institutionIdentifier: institutionDto.institution_identifier,
   };
 };
 
-export { Institution, InstitutionDto, institutionFactory };
+export { Institution, InstitutionCreation, InstitutionDto, institutionFactory };

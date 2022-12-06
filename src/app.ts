@@ -130,27 +130,27 @@ app.post(
 );
 
 // Not implemented yet given batch work
-app.get(
-  "/user/:userId/transactions",
-  async (
-    request: Request,
-    response: Response
-  ): Promise<Response<UserAccessToken>> => {
-    try {
-      // TODO Verify that user exists using userId
-      const { userId } = request.params;
-      const result = await new AccountTransactionService().getAll(
-        parseInt(userId)
-      );
+// app.get(
+//   "/user/:userId/transactions",
+//   async (
+//     request: Request,
+//     response: Response
+//   ): Promise<Response<UserAccessToken>> => {
+//     try {
+//       // TODO Verify that user exists using userId
+//       const { userId } = request.params;
+//       const result = await new AccountTransactionService().getAll(
+//         parseInt(userId)
+//       );
 
-      return response.send(result);
-    } catch (error) {
-      console.log(error);
-      console.error("ERROR::POST /user/:userId/transactions");
-      return response.status(500).send(error);
-    }
-  }
-);
+//       return response.send(result);
+//     } catch (error) {
+//       console.log(error);
+//       console.error("ERROR::POST /user/:userId/transactions");
+//       return response.status(500).send(error);
+//     }
+//   }
+// );
 
 app.listen(port, () => {
   console.log(`App is listening on port ${port} !`);

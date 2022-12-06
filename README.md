@@ -23,5 +23,11 @@
 
 ## TODOs
 
-- Need to see how to get the account the transaction is linked to set correctly, i.e. account_id?
-- Need to see if we can get account the user_access_token is linked to somehow in the table as well
+- When user access token is created
+
+  - check if item_id exists in INSTITUITION, add if doesn't exist
+  - Fetch accounts assosociated with the access_token
+  - Check if accounts are in INSTITUITION_ACCOUNT table, add if doesn't exist
+
+- Figure out read and readAll interface for DAO
+- Check if we can use class and decorators instead of interfaces for models

@@ -15,10 +15,12 @@ class UserDao implements Dao {
       const values = [[user?.principalId, user?.firstName, user?.lastName]];
 
       await this.rdsDatabaseService.beginTransaction();
+
       const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
         SQL_USER_CREATE,
         values
       );
+
       await this.rdsDatabaseService.commitTransaction();
 
       return { ...user, userId: insertId };

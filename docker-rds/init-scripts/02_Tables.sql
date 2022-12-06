@@ -62,7 +62,7 @@ CREATE TABLE USER_ACCESS_TOKEN (
 CREATE TABLE INSTITUITION (
     institution_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
-    item_id VARCHAR(100) NOT NULL,
+    institution_identifier VARCHAR(100) NOT NULL,
     PRIMARY KEY (institution_id),
     -- Constraints
     CONSTRAINT fk_tbl_institution_to_user_col_user_id 

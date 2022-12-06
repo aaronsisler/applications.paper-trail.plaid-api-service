@@ -1,5 +1,6 @@
 import {
   InstitutionAccount,
+  InstitutionAccountCreation,
   institutionAccountFactory,
 } from "../models/institution-account";
 
@@ -18,30 +19,33 @@ class InstitutionAccountDao implements Dao {
   }
 
   async create(
-    institutionAccount: InstitutionAccount
-  ): Promise<InstitutionAccount> {
+    institutionAccounts: InstitutionAccountCreation[]
+  ): Promise<void> {
     try {
-      const values = [
-        [
-          institutionAccount?.institutionId,
-          institutionAccount?.accountId,
-          institutionAccount?.itemId,
-          institutionAccount?.accountMaskLastFour,
-          institutionAccount?.accountName,
-          institutionAccount?.accountOfficialName,
-          institutionAccount?.accountType,
-          institutionAccount?.accountSubtype,
-        ],
-      ];
+      const values: any = [];
+
+      institutionAccounts.forEach(
+        (institutionAccount: InstitutionAccountCreation) => {
+          values.push([
+            institutionAccount?.institutionId,
+            institutionAccount?.accountId,
+            institutionAccount?.accountMaskLastFour,
+            institutionAccount?.accountName,
+            institutionAccount?.accountOfficialName,
+            institutionAccount?.accountType,
+            institutionAccount?.accountSubtype,
+          ]);
+        }
+      );
 
       await this.rdsDatabaseService.beginTransaction();
-      const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
+
+      await this.rdsDatabaseService.executeSqlStatement(
         SQL_INSTITUTION_ACCOUNT_CREATE,
         values
       );
-      await this.rdsDatabaseService.commitTransaction();
 
-      return { ...institutionAccount, institutionId: insertId };
+      await this.rdsDatabaseService.commitTransaction();
     } catch (error) {
       await this.rdsDatabaseService.rollbackTransaction();
       console.error("ERROR::InstitutionAccountDao::create");

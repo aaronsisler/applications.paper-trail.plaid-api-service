@@ -111,7 +111,7 @@ export const SQL_USER_ACCESS_TOKEN_CREATE = `
   INSERT INTO ${DATABASE_TABLE.USER_ACCESS_TOKEN} 
   (
     user_id,
-    item_id,
+    institution_id,
     access_token
   ) 
   VALUES ?

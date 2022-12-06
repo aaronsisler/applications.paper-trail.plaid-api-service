@@ -1,5 +1,4 @@
 import {
-  CreateUserAccessToken,
   UserAccessToken,
   userAccessTokenFactory,
 } from "../models/user-access-token";
@@ -19,34 +18,30 @@ class UserAccessTokenDao implements Dao {
     this.rdsDatabaseService = new RdsDatabaseService();
   }
 
-  async create(
-    userAccessToken: CreateUserAccessToken
-  ): Promise<UserAccessToken> {
+  async create(userAccessToken: UserAccessToken): Promise<void> {
     try {
       const values = [
         [
           userAccessToken?.userId,
-          userAccessToken?.itemId,
+          userAccessToken?.institutionId,
           userAccessToken?.accessToken,
         ],
       ];
 
       await this.rdsDatabaseService.beginTransaction();
-      const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
+
+      await this.rdsDatabaseService.executeSqlStatement(
         SQL_USER_ACCESS_TOKEN_CREATE,
         values
       );
-      await this.rdsDatabaseService.commitTransaction();
 
-      return { ...userAccessToken, userAuthTokenId: insertId };
+      await this.rdsDatabaseService.commitTransaction();
     } catch (error) {
       await this.rdsDatabaseService.rollbackTransaction();
       console.error("ERROR::UserAccessTokenDao::create");
       throw error;
     }
   }
-
-  async read(userId: string) {}
 
   async readAll(userId: number): Promise<UserAccessToken[]> {
     try {

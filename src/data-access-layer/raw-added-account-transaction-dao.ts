@@ -10,42 +10,38 @@ class RawAddedAccountTransactionDao implements Dao {
     this.rdsDatabaseService = new RdsDatabaseService();
   }
 
-  async create(accountTransactions: RawAddedAccountTransaction[]) {
+  async create(rawAddedAccountTransactions: RawAddedAccountTransaction[]) {
     try {
       const values: any = [];
 
-      accountTransactions.forEach(
-        (accountTransaction: RawAddedAccountTransaction) => {
+      rawAddedAccountTransactions.forEach(
+        (rawAddedAccountTransaction: RawAddedAccountTransaction) => {
           values.push([
-            accountTransaction.userId,
-            accountTransaction.transactionId,
-            accountTransaction.accountId,
-            accountTransaction.amount,
-            accountTransaction.accountTransactionDate,
-            accountTransaction.accountTransactionYear,
-            accountTransaction.accountTransactionMonth,
-            accountTransaction.accountTransactionDay,
-            accountTransaction.pending,
-            accountTransaction.merchantName,
-            accountTransaction.merchantNameDetailed,
-            accountTransaction.categoryId,
-            accountTransaction.category.join(","),
+            rawAddedAccountTransaction.userId,
+            rawAddedAccountTransaction.transactionId,
+            rawAddedAccountTransaction.accountId,
+            rawAddedAccountTransaction.amount,
+            rawAddedAccountTransaction.accountTransactionDate,
+            rawAddedAccountTransaction.accountTransactionYear,
+            rawAddedAccountTransaction.accountTransactionMonth,
+            rawAddedAccountTransaction.accountTransactionDay,
+            rawAddedAccountTransaction.pending,
+            rawAddedAccountTransaction.merchantName,
+            rawAddedAccountTransaction.merchantNameDetailed,
+            rawAddedAccountTransaction.categoryId,
+            rawAddedAccountTransaction.category.join(","),
           ]);
         }
       );
 
       await this.rdsDatabaseService.beginTransaction();
-      // const { insertId } =
-      const response = await this.rdsDatabaseService.executeSqlStatement(
+
+      await this.rdsDatabaseService.executeSqlStatement(
         SQL_RAW_ADDED_ACCOUNT_TRANSACTION_CREATE,
         values
       );
 
-      console.log(response);
-
       await this.rdsDatabaseService.commitTransaction();
-
-      return {};
     } catch (error) {
       await this.rdsDatabaseService.rollbackTransaction();
       console.error("ERROR::RawAddedAccountTransactionDao::create");

@@ -1,4 +1,8 @@
-import { Institution, institutionFactory } from "../models/institution";
+import {
+  Institution,
+  InstitutionCreation,
+  institutionFactory,
+} from "../models/institution";
 
 import { Dao } from "./dao";
 import { RdsDatabaseService } from "./rds-database-service";
@@ -11,17 +15,19 @@ class InstitutionDao implements Dao {
     this.rdsDatabaseService = new RdsDatabaseService();
   }
 
-  async create(institution: Institution): Promise<Institution> {
+  async create(institution: InstitutionCreation): Promise<Institution> {
     try {
       const values = [
-        [institution?.institutionId, institution?.userId, institution?.itemId],
+        [institution?.userId, institution?.institutionIdentifier],
       ];
 
       await this.rdsDatabaseService.beginTransaction();
+
       const { insertId } = await this.rdsDatabaseService.executeSqlStatement(
         SQL_INSTITUTION_CREATE,
         values
       );
+
       await this.rdsDatabaseService.commitTransaction();
 
       return { ...institution, institutionId: insertId };
@@ -32,9 +38,9 @@ class InstitutionDao implements Dao {
     }
   }
 
-  async read(institutionId: number): Promise<Institution> {
+  async read(userId: number, institutionId: string): Promise<Institution> {
     try {
-      const values = [institutionId];
+      const values = [userId, institutionId];
 
       const [result] = await this.rdsDatabaseService.executeSqlStatement(
         SQL_INSTITUTION_READ,
