@@ -79,7 +79,6 @@ class AccountTransactionBatchService {
       let modifiedCounter = 0;
       let removedCounter = 0;
       // Iterate through each page of new transaction updates for item
-      console.log(userAccessToken.itemId);
       console.log(cursor);
       while (hasMore) {
         const request: TransactionsSyncRequest = {
@@ -152,7 +151,7 @@ class AccountTransactionBatchService {
       await this.userAccessTokenDao.update(
         "last_cursor",
         cursor,
-        userAccessToken.userAuthTokenId
+        userAccessToken.userAccessTokenId
       );
 
       console.log("addedCounter");

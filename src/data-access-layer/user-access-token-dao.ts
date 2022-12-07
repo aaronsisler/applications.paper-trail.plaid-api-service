@@ -1,5 +1,6 @@
 import {
   UserAccessToken,
+  UserAccessTokenCreation,
   userAccessTokenFactory,
 } from "../models/user-access-token";
 import { databaseUpdateSql } from "../utils/database-update-sql-util";
@@ -18,7 +19,7 @@ class UserAccessTokenDao implements Dao {
     this.rdsDatabaseService = new RdsDatabaseService();
   }
 
-  async create(userAccessToken: UserAccessToken): Promise<void> {
+  async create(userAccessToken: UserAccessTokenCreation): Promise<void> {
     try {
       const values = [
         [

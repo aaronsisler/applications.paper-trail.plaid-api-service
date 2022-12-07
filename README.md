@@ -25,9 +25,9 @@
 
 - When user access token is created
 
-  - check if item_id exists in INSTITUITION, add if doesn't exist
+  - check if item_id exists in INSTITUTION, add if doesn't exist
   - Fetch accounts assosociated with the access_token
-  - Check if accounts are in INSTITUITION_ACCOUNT table, add if doesn't exist
+  - Check if accounts are in INSTITUTION_ACCOUNT table, add if doesn't exist
 
 - Figure out read and readAll interface for DAO
 - Check if we can use class and decorators instead of interfaces for models

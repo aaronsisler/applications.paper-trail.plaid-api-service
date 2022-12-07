@@ -10,8 +10,12 @@ import { InstitutionDao } from "../data-access-layer/institution-dao";
 import { UserAccessTokenDao } from "../data-access-layer/user-access-token-dao";
 import { Institution } from "../models/institution";
 import { InstitutionAccountCreation } from "../models/institution-account";
-import { UserAccessToken } from "../models/user-access-token";
+import { UserAccessTokenCreation } from "../models/user-access-token";
 import { InstitutionAccountDao } from "../data-access-layer/institution-account-dao";
+import {
+  getMethodStartTime,
+  methodProcessTime,
+} from "../utils/method-process-time";
 
 class UserAccessTokenService {
   client: PlaidApi;
@@ -27,6 +31,7 @@ class UserAccessTokenService {
   }
 
   async save(userId: number, publicToken: string): Promise<void> {
+    const time: Date = getMethodStartTime();
     try {
       // Use public token and swap for access token
       const { accessToken, itemId } = await this.fetchAccessToken(publicToken);
@@ -34,7 +39,7 @@ class UserAccessTokenService {
       // Use access token to fetch account information
       const accountsMetadata = await this.fetchAccountsMetadata(accessToken);
 
-      // Save the itemId as institutionIdentifier in INSTITUITION
+      // Save the itemId as institutionIdentifier in INSTITUTION
       // Get back the institution_id
       const institution: Institution = await this.institutionDao.create({
         userId,
@@ -52,7 +57,7 @@ class UserAccessTokenService {
       await this.institutionAccountDao.create(institutionAccounts);
 
       // Build the user access token (institution id, user id)
-      const userAccessToken: UserAccessToken = {
+      const userAccessToken: UserAccessTokenCreation = {
         userId,
         institutionId: institution.institutionId,
         accessToken,
@@ -65,6 +70,8 @@ class UserAccessTokenService {
     } catch (error) {
       console.error("ERROR::UserAccessTokenService::save");
       throw error;
+    } finally {
+      methodProcessTime("UserAccessTokenService::save", time);
     }
   }
 

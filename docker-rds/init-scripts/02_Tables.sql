@@ -8,14 +8,14 @@ DROP TABLE IF EXISTS USER_ACCESS_TOKEN;
 
 DROP TABLE IF EXISTS ACCOUNT_TRANSACTION_CATEGORY;
 
-DROP TABLE IF EXISTS INSTITUITION_ACCOUNT;
+DROP TABLE IF EXISTS INSTITUTION_ACCOUNT;
 
 ---------------------------------------------
 -- Only USER(user_id) Foreign Key Constraint
 ---------------------------------------------
 DROP TABLE IF EXISTS ACCOUNT_TRANSACTION;
 
-DROP TABLE IF EXISTS INSTITUITION;
+DROP TABLE IF EXISTS INSTITUTION;
 
 DROP TABLE IF EXISTS RAW_ADDED_ACCOUNT_TRANSACTION;
 
@@ -38,9 +38,34 @@ DROP TABLE IF EXISTS USER;
 CREATE TABLE USER (
     user_id INT NOT NULL AUTO_INCREMENT,
     principal_id VARCHAR(255) NOT NULL,
-    first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id)
+);
+
+CREATE TABLE INSTITUTION (
+    institution_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    institution_identifier VARCHAR(100) NOT NULL,
+    PRIMARY KEY (institution_id),
+    -- Constraints
+    CONSTRAINT fk_tbl_institution_to_user_col_user_id 
+    FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE INSTITUTION_ACCOUNT (
+    institution_account_id INT NOT NULL AUTO_INCREMENT,
+    institution_id INT NOT NULL,
+    account_id VARCHAR(100) NOT NULL,
+    account_mask_last_four VARCHAR(10),
+    account_name VARCHAR(100) NOT NULL,
+    account_official_name VARCHAR(100) NOT NULL,
+    account_type VARCHAR(100) NOT NULL,
+    account_subtype VARCHAR(100) NOT NULL,
+    PRIMARY KEY (institution_account_id),
+    -- Constraints
+    CONSTRAINT fk_tbl_institution_to_instn_acct_col_institution_id 
+    FOREIGN KEY (institution_id) REFERENCES INSTITUTION(institution_id) ON DELETE CASCADE
 );
 
 CREATE TABLE USER_ACCESS_TOKEN (
@@ -56,33 +81,8 @@ CREATE TABLE USER_ACCESS_TOKEN (
     FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE,
     
     CONSTRAINT fk_tbl_user_access_token_to_instn_col_institution_id
-    FOREIGN KEY (institution_id) REFERENCES INSTITUITION(institution_id) ON DELETE CASCADE
+    FOREIGN KEY (institution_id) REFERENCES INSTITUTION(institution_id) ON DELETE CASCADE
 );
-
-CREATE TABLE INSTITUITION (
-    institution_id INT NOT NULL AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    institution_identifier VARCHAR(100) NOT NULL,
-    PRIMARY KEY (institution_id),
-    -- Constraints
-    CONSTRAINT fk_tbl_institution_to_user_col_user_id 
-    FOREIGN KEY (user_id) REFERENCES USER(user_id) ON DELETE CASCADE
-)
-
-CREATE TABLE INSTITUITION_ACCOUNT (
-    institution_account_id INT NOT NULL AUTO_INCREMENT,
-    institution_id INT NOT NULL,
-    account_id VARCHAR(100) NOT NULL,
-    account_mask_last_four VARCHAR(10),
-    account_name VARCHAR(100) NOT NULL,
-    account_official_name VARCHAR(100) NOT NULL,
-    account_type VARCHAR(100) NOT NULL,
-    account_subtype VARCHAR(100) NOT NULL,
-    PRIMARY KEY (institution_account_id),
-    -- Constraints
-    CONSTRAINT fk_tbl_institution_to_instn_acct_col_institution_id 
-    FOREIGN KEY (institution_id) REFERENCES INSTITUITION(institution_id) ON DELETE CASCADE
-)
 
 CREATE TABLE ACCOUNT_TRANSACTION (
     account_transaction_id INT NOT NULL AUTO_INCREMENT,

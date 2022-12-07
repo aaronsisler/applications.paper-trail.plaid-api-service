@@ -20,7 +20,7 @@ export const SQL_INSTITUTION_CREATE = `
   INSERT INTO ${DATABASE_TABLE.INSTITUTION} 
   (
     user_id,
-    item_id
+    institution_identifier
   ) 
   VALUES ?
 `;
@@ -101,8 +101,8 @@ export const SQL_USER_CREATE = `
   INSERT INTO ${DATABASE_TABLE.USER} 
   (
     principal_id,
-    first_name,
-    last_name
+    last_name,
+    first_name
   ) 
   VALUES ?
 `;
