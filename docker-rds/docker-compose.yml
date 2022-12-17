@@ -1,0 +1,28 @@
+version: "3.1"
+
+services:
+  mysql-db:
+    image: mysql:5.6
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    volumes:
+      - "./init-scripts:/docker-entrypoint-initdb.d/"
+
+  # local-data-api:
+  #   image: koxudaxi/local-data-api
+  #   depends_on:
+  #     - mysql-db
+  #   restart: always
+  #   environment:
+  #     MYSQL_HOST: db
+  #     MYSQL_PORT: ${MYSQL_PORT}
+  #     MYSQL_USER: root
+  #     MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #     RESOURCE_ARN: "arn:aws:rds:us-east-1:123456789012:cluster:local"
+  #     SECRET_ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:local"
+  #   ports:
+  #     - "8080:80"
